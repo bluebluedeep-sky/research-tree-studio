@@ -1,0 +1,28 @@
+{
+  "name": "research-tree-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "backup": "node scripts/create-backup.mjs",
+    "dev": "node server/index.mjs",
+    "start": "node server/index.mjs",
+    "seed": "node scripts/extract-seed.mjs",
+    "papers:download": "node scripts/download-seed-papers.mjs",
+    "test": "node --test --test-isolation=none tests/*.test.mjs",
+    "build:share": "node scripts/build-share.mjs",
+    "build:portable": "node scripts/build-portable.mjs",
+    "build:single-exe": "npm run build:portable && node scripts/build-single-exe.mjs",
+    "build:friend-share": "node scripts/build-friend-share.mjs",
+    "build:mobile-share": "node scripts/build-mobile-share.mjs",
+    "build:github-ready": "node scripts/build-github-ready.mjs"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "express": "5.2.1",
+    "pdfjs-dist": "6.2.108"
+  },
+  "devDependencies": {
+    "playwright-core": "1.62.1"
+  }
+}
