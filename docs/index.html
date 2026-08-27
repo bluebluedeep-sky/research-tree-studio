@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes,viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#f5f8f6">
+<title>高效 Attention · 手机体验版</title>
+<style>
+:root{--ink:#17211d;--muted:#617168;--line:#cedbd3;--paper:#f5f8f6;--white:#fff;--teal:#08796e;--teal-soft:#e8f3ef;--shadow:0 14px 40px rgba(26,53,43,.18);font-family:Arial,"Microsoft YaHei","PingFang SC",sans-serif;color:var(--ink);background:var(--paper)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);font-size:14px;line-height:1.55;letter-spacing:0}button,a{font:inherit}button{color:inherit}.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:54px;padding:8px max(14px,env(safe-area-inset-left));background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}.brand{display:flex;align-items:center;gap:9px;min-width:0}.brand-mark{display:grid;place-items:center;width:30px;height:30px;background:var(--teal);color:#fff;font-weight:800}.brand-text{min-width:0}.brand-text b,.brand-text small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.brand-text b{font-size:13px}.brand-text small{color:var(--muted);font-size:10px}.ghost{min-height:34px;padding:6px 10px;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--teal);font-size:12px}.hero{width:min(1160px,calc(100% - 28px));margin:auto;padding:24px 0 14px}.kicker{margin:0;color:var(--teal);font-size:10px;font-weight:800}.hero h1{margin:4px 0 5px;font-size:clamp(22px,6vw,34px);line-height:1.2}.hero p{max-width:760px;margin:0;color:var(--muted)}.summary{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.summary span{padding:4px 8px;border:1px solid var(--line);background:#fff;border-radius:4px;font-size:11px}.map-section{width:min(1500px,calc(100% - 20px));margin:auto;background:#fff;border:1px solid var(--line)}.map-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;border-bottom:1px solid var(--line);font-size:11px}.map-toolbar p{margin:0;color:var(--muted)}.zoom-state{min-width:48px;padding:3px 7px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--teal);font-size:10px;font-variant-numeric:tabular-nums}.legend{display:flex;gap:8px;flex-wrap:wrap}.legend span{display:inline-flex;align-items:center;gap:4px}.legend i{width:7px;height:7px;border-radius:50%;background:var(--c)}.map-scroller{height:min(68dvh,720px);min-height:430px;overflow:auto;overscroll-behavior:contain;background:#fbfdfb;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}.map-scroller svg{display:block;width:1682px;height:2278px;min-width:0;min-height:0;user-select:none;-webkit-user-select:none}.year-guide line{stroke:#e1e9e4;stroke-width:1}.year-guide text{fill:#4f6259;font-size:14px;font-weight:750;text-anchor:middle}.branch-bg{fill:#fff;stroke:#e4ebe7}.branch-trunk,.branch-twig{fill:none;stroke-linecap:round}.branch-trunk{stroke-width:4}.branch-twig{stroke-width:1.5;opacity:.4}.branch-label rect{fill:#fff;stroke-width:2}.branch-label text{fill:#243c34;font-size:12px;font-weight:750}.branch-label .branch-question{fill:#607169;font-size:9px;font-weight:500}.branch-label .branch-count{text-anchor:end;fill:#607169;font-size:8px;font-weight:500}.relation{fill:none;stroke-width:1.7;opacity:.34;transition:opacity .15s,stroke-width .15s,filter .15s}.paper-node{cursor:pointer;outline:none;transition:opacity .15s}.paper-node>rect{fill:#fff;stroke-width:1.6;filter:drop-shadow(0 2px 2px rgba(30,55,46,.08));transition:stroke-width .15s,filter .15s,fill .15s}.paper-node text{pointer-events:none}.paper-title{fill:#17211d;font-size:10.5px;font-weight:750}.paper-title-zh{fill:#2a675c;font-size:10px}.paper-meta{fill:#697970;font-size:8.5px}.status-marker circle{stroke:#fff;stroke-width:1.5}.status-marker text{fill:#fff;font-size:7px;font-weight:750;text-anchor:middle}.status-marker.full circle{fill:#2c8751}.status-marker.abstract circle{fill:#cf9721}.status-marker.locked circle{fill:#9c5638}.status-marker.missing circle{fill:#909a94}.map-active .paper-node{opacity:.22}.map-active .branch-twig,.map-active .relation{opacity:.05}.map-active .paper-node.locked,.map-active .paper-node.connected{opacity:1}.map-active .paper-node.locked>rect{fill:#edf8f4;stroke-width:4;filter:drop-shadow(0 3px 4px rgba(0,98,82,.24))}.map-active .paper-node.connected>rect{stroke-width:2.5}.map-active .branch-twig.highlighted{opacity:1;stroke-width:3}.map-active .relation.highlighted{opacity:1;stroke-width:4;filter:drop-shadow(0 2px 2px rgba(24,63,49,.2))}.tip{width:min(1160px,calc(100% - 28px));margin:10px auto 0;color:var(--muted);font-size:11px}.directory{width:min(1160px,calc(100% - 28px));margin:22px auto 70px}.directory header{display:flex;align-items:end;justify-content:space-between;gap:10px;margin-bottom:8px}.directory h2{margin:0;font-size:18px}.directory header p{margin:0;color:var(--muted);font-size:11px}.directory-group{border-top:1px solid var(--line);background:#fff}.directory-group:last-child{border-bottom:1px solid var(--line)}.directory-group summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;cursor:pointer}.directory-group summary span{border-left:4px solid var(--branch);padding-left:8px;font-weight:750}.directory-group summary small{color:var(--muted)}.directory-group>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border-top:1px solid var(--line)}.directory-group button{display:grid;gap:1px;padding:10px 12px;text-align:left;border:0;background:#fff}.directory-group button b,.directory-group button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.directory-group button b{font-size:11px}.directory-group button span{color:#2e665b;font-size:10px}.directory-group button small{color:var(--muted);font-size:9px}.reader-backdrop{position:fixed;inset:0;z-index:79;display:none;background:rgba(16,34,27,.35)}.reader-backdrop.open{display:block}.reader{position:fixed;left:0;right:0;bottom:0;z-index:80;max-height:min(78dvh,720px);padding-bottom:env(safe-area-inset-bottom);background:#fff;border-top:1px solid #91aea3;box-shadow:0 -16px 42px rgba(18,42,33,.24);transform:translateY(calc(100% + 20px));transition:transform .2s ease}.reader.open{transform:translateY(0)}.reader-handle{width:40px;height:4px;margin:7px auto 2px;background:#c5d2cc;border-radius:4px}.reader-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 14px 10px;border-bottom:1px solid var(--line)}.reader-head div{min-width:0}.reader-head h2{margin:0;font-size:15px;line-height:1.3}.reader-head p{margin:3px 0 0;color:#2d675c;font-size:11px}.icon{flex:0 0 auto;width:32px;height:32px;border:0;background:#eef4f1;border-radius:50%;font-size:18px}.reader-body{max-height:calc(min(78dvh,720px) - 88px);overflow:auto;padding:12px 14px 20px;overscroll-behavior:contain}.reader-meta{display:flex;gap:6px;flex-wrap:wrap}.reader-meta span{padding:3px 6px;background:#eff4f1;color:#4f655c;border-radius:3px;font-size:10px}.reader-grid{display:grid;gap:10px;margin-top:12px}.reader-grid section{border-left:3px solid var(--teal);padding-left:10px}.reader-grid h3{margin:0 0 2px;font-size:11px}.reader-grid p{margin:0;color:#4f6058;font-size:11px}.relation-block{margin-top:14px}.relation-block h3{margin:0 0 6px;font-size:12px}.relation-card{padding:9px 0;border-top:1px solid #e0e8e3}.relation-card:first-of-type{border-top:0}.relation-card header{display:flex;align-items:center;justify-content:space-between;gap:8px}.relation-card b{font-size:10px;color:var(--relation-color)}.relation-card small{color:var(--muted);font-size:9px}.relation-card p{margin:4px 0 0;color:#4f6058;font-size:10px}.relation-path{color:#2c5e54!important;font-weight:650}.reader-actions{position:sticky;bottom:-20px;display:flex;gap:7px;margin:16px -14px -20px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid var(--line)}.reader-actions button,.reader-actions a{flex:1;display:grid;place-items:center;min-height:38px;padding:7px;border:1px solid var(--teal);border-radius:5px;background:#fff;color:var(--teal);text-decoration:none;font-size:11px}.reader-actions .primary{background:var(--teal);color:#fff}.privacy{padding:12px 14px;background:#eaf3ef;color:#416158;font-size:10px}.empty{color:var(--muted);font-size:10px}@media(max-width:650px){.hero{padding-top:18px}.map-section{width:100%;border-left:0;border-right:0}.map-toolbar{align-items:flex-start;flex-direction:column}.map-scroller{height:64dvh;min-height:390px}.directory-group>div{grid-template-columns:1fr}.directory{margin-bottom:46px}.reader{max-height:82dvh}.reader-body{max-height:calc(82dvh - 88px)}}@media(min-width:900px){.reader{left:auto;right:18px;bottom:18px;width:430px;border:1px solid #91aea3}.reader-backdrop.open{display:none}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="brand"><span class="brand-mark">Y</span><div class="brand-text"><b>研究树工作台</b><small>手机只读体验版 · 无个人数据</small></div></div><button class="ghost" id="clear-selection" type="button">清除选定</button></header>
+<main>
+  <section class="hero"><p class="kicker">RESEARCH LINEAGE</p><h1>高效 Attention</h1><p>2023–2026 的高效注意力研究脉络，重点呈现系统优化、稀疏检索、KV 记忆管理、状态替代与脑启发记忆。</p><div class="summary"><span>5 条研究分支</span><span>36 篇论文</span><span>27 条论文关系</span><span>2023—2026</span></div></section>
+  <section class="map-section"><header class="map-toolbar"><p>单指滑动树；在树内双指捏合缩放。点论文可同时锁定多个节点。</p><div class="legend"><button class="zoom-state" id="zoom-indicator" type="button" title="恢复 100%" aria-label="当前缩放 100%，点按恢复">100%</button><span><i style="--c:#2c8751"></i>全文</span><span><i style="--c:#cf9721"></i>摘要</span><span><i style="--c:#9c5638"></i>权限</span><span><i style="--c:#909a94"></i>待补充</span></div></header><div class="map-scroller" id="map-scroller"><svg id="research-map" viewBox="0 0 1682 2278" width="1682" height="2278" aria-label="高效 Attention 研究树">
+  <defs><marker id="arrow-extends" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#33765f"/></marker><marker id="arrow-improves" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2b6ca3"/></marker><marker id="arrow-replaces" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#a34d3f"/></marker><marker id="arrow-combines" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7654a3"/></marker><marker id="arrow-contrasts" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#a06a22"/></marker><marker id="arrow-inspires" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2e827f"/></marker><marker id="arrow-migrates_problem" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7a617f"/></marker></defs>
+  <g class="year-guide"><line x1="436" y1="42" x2="436" y2="2254"/><text x="436" y="28">2023</text></g><g class="year-guide"><line x1="786" y1="42" x2="786" y2="2254"/><text x="786" y="28">2024</text></g><g class="year-guide"><line x1="1136" y1="42" x2="1136" y2="2254"/><text x="1136" y="28">2025</text></g><g class="year-guide"><line x1="1486" y1="42" x2="1486" y2="2254"/><text x="1486" y="28">2026</text></g>
+  <g class="branch-band" data-branch="system">
+    <rect class="branch-bg" x="12" y="76" width="1658" height="264"/>
+    <path class="branch-trunk" d="M 28 122 H 220" stroke="#2c6ca3"/>
+    <path class="branch-twig" data-paper="system-0" d="M 220 122 C 262 122, 272 182, 310 182" stroke="#2c6ca3"/><path class="branch-twig" data-paper="system-1" d="M 220 122 C 262 122, 622 182, 660 182" stroke="#2c6ca3"/><path class="branch-twig" data-paper="system-2" d="M 220 122 C 262 122, 972 182, 1010 182" stroke="#2c6ca3"/><path class="branch-twig" data-paper="system-3" d="M 220 122 C 262 122, 972 264, 1010 264" stroke="#2c6ca3"/>
+    <g class="branch-label" transform="translate(28 92)">
+      <rect width="192" height="58" rx="6" stroke="#2c6ca3"/>
+      <text x="12" y="21">A. 系统与精确核</text>
+      <text class="branch-question" x="12" y="41">不近似，如何让 attention 的真实瓶颈更快？</text>
+      <text class="branch-count" x="180" y="53">4 篇</text>
+    </g>
+  </g><g class="branch-band" data-branch="sparse">
+    <rect class="branch-bg" x="12" y="364" width="1658" height="346"/>
+    <path class="branch-trunk" d="M 28 410 H 220" stroke="#b86721"/>
+    <path class="branch-twig" data-paper="sparse-0" d="M 220 410 C 262 410, 622 470, 660 470" stroke="#b86721"/><path class="branch-twig" data-paper="sparse-1" d="M 220 410 C 262 410, 972 470, 1010 470" stroke="#b86721"/><path class="branch-twig" data-paper="sparse-2" d="M 220 410 C 262 410, 1322 470, 1360 470" stroke="#b86721"/><path class="branch-twig" data-paper="sparse-3" d="M 220 410 C 262 410, 972 552, 1010 552" stroke="#b86721"/><path class="branch-twig" data-paper="sparse-4" d="M 220 410 C 262 410, 972 634, 1010 634" stroke="#b86721"/>
+    <g class="branch-label" transform="translate(28 380)">
+      <rect width="192" height="58" rx="6" stroke="#b86721"/>
+      <text x="12" y="21">B. 稀疏检索与动态选择</text>
+      <text class="branch-question" x="12" y="41">先找少量候选 KV，再做精确 attention，能否…</text>
+      <text class="branch-count" x="180" y="53">5 篇</text>
+    </g>
+  </g><g class="branch-band" data-branch="kv">
+    <rect class="branch-bg" x="12" y="734" width="1658" height="674"/>
+    <path class="branch-trunk" d="M 28 780 H 220" stroke="#40844a"/>
+    <path class="branch-twig" data-paper="kv-0" d="M 220 780 C 262 780, 272 840, 310 840" stroke="#40844a"/><path class="branch-twig" data-paper="kv-1" d="M 220 780 C 262 780, 272 922, 310 922" stroke="#40844a"/><path class="branch-twig" data-paper="kv-2" d="M 220 780 C 262 780, 622 840, 660 840" stroke="#40844a"/><path class="branch-twig" data-paper="kv-3" d="M 220 780 C 262 780, 622 922, 660 922" stroke="#40844a"/><path class="branch-twig" data-paper="kv-4" d="M 220 780 C 262 780, 622 1004, 660 1004" stroke="#40844a"/><path class="branch-twig" data-paper="kv-5" d="M 220 780 C 262 780, 622 1086, 660 1086" stroke="#40844a"/><path class="branch-twig" data-paper="kv-6" d="M 220 780 C 262 780, 622 1168, 660 1168" stroke="#40844a"/><path class="branch-twig" data-paper="kv-7" d="M 220 780 C 262 780, 622 1250, 660 1250" stroke="#40844a"/><path class="branch-twig" data-paper="kv-8" d="M 220 780 C 262 780, 622 1332, 660 1332" stroke="#40844a"/><path class="branch-twig" data-paper="kv-9" d="M 220 780 C 262 780, 972 840, 1010 840" stroke="#40844a"/><path class="branch-twig" data-paper="kv-10" d="M 220 780 C 262 780, 972 922, 1010 922" stroke="#40844a"/><path class="branch-twig" data-paper="kv-11" d="M 220 780 C 262 780, 972 1004, 1010 1004" stroke="#40844a"/><path class="branch-twig" data-paper="kv-12" d="M 220 780 C 262 780, 972 1086, 1010 1086" stroke="#40844a"/><path class="branch-twig" data-paper="kv-13" d="M 220 780 C 262 780, 972 1168, 1010 1168" stroke="#40844a"/>
+    <g class="branch-label" transform="translate(28 750)">
+      <rect width="192" height="58" rx="6" stroke="#40844a"/>
+      <text x="12" y="21">C. KV 记忆管理</text>
+      <text class="branch-question" x="12" y="41">KV 是在线记忆：保留谁、压缩谁、何时召回？</text>
+      <text class="branch-count" x="180" y="53">14 篇</text>
+    </g>
+  </g><g class="branch-band" data-branch="alt">
+    <rect class="branch-bg" x="12" y="1432" width="1658" height="510"/>
+    <path class="branch-trunk" d="M 28 1478 H 220" stroke="#6f5d9e"/>
+    <path class="branch-twig" data-paper="alt-0" d="M 220 1478 C 262 1478, 272 1538, 310 1538" stroke="#6f5d9e"/><path class="branch-twig" data-paper="alt-1" d="M 220 1478 C 262 1478, 272 1620, 310 1620" stroke="#6f5d9e"/><path class="branch-twig" data-paper="alt-2" d="M 220 1478 C 262 1478, 272 1702, 310 1702" stroke="#6f5d9e"/><path class="branch-twig" data-paper="alt-3" d="M 220 1478 C 262 1478, 622 1538, 660 1538" stroke="#6f5d9e"/><path class="branch-twig" data-paper="alt-4" d="M 220 1478 C 262 1478, 622 1620, 660 1620" stroke="#6f5d9e"/><path class="branch-twig" data-paper="alt-5" d="M 220 1478 C 262 1478, 622 1702, 660 1702" stroke="#6f5d9e"/><path class="branch-twig" data-paper="alt-6" d="M 220 1478 C 262 1478, 622 1784, 660 1784" stroke="#6f5d9e"/><path class="branch-twig" data-paper="alt-7" d="M 220 1478 C 262 1478, 622 1866, 660 1866" stroke="#6f5d9e"/>
+    <g class="branch-label" transform="translate(28 1448)">
+      <rect width="192" height="58" rx="6" stroke="#6f5d9e"/>
+      <text x="12" y="21">D. 线性 / 状态替代</text>
+      <text class="branch-question" x="12" y="41">能否不用显式全量 KV，而用可递推状态保存上下文？</text>
+      <text class="branch-count" x="180" y="53">8 篇</text>
+    </g>
+  </g><g class="branch-band" data-branch="brain">
+    <rect class="branch-bg" x="12" y="1966" width="1658" height="264"/>
+    <path class="branch-trunk" d="M 28 2012 H 220" stroke="#a14e49"/>
+    <path class="branch-twig" data-paper="brain-0" d="M 220 2012 C 262 2012, 272 2072, 310 2072" stroke="#a14e49"/><path class="branch-twig" data-paper="brain-1" d="M 220 2012 C 262 2012, 622 2072, 660 2072" stroke="#a14e49"/><path class="branch-twig" data-paper="brain-2" d="M 220 2012 C 262 2012, 622 2154, 660 2154" stroke="#a14e49"/><path class="branch-twig" data-paper="brain-3" d="M 220 2012 C 262 2012, 972 2072, 1010 2072" stroke="#a14e49"/><path class="branch-twig" data-paper="brain-4" d="M 220 2012 C 262 2012, 1322 2072, 1360 2072" stroke="#a14e49"/>
+    <g class="branch-label" transform="translate(28 1982)">
+      <rect width="192" height="58" rx="6" stroke="#a14e49"/>
+      <text x="12" y="21">E. 脑启发选择与记忆</text>
+      <text class="branch-question" x="12" y="41">稀疏竞争、工作记忆、长期记忆与事件驱动能给效率什么新约…</text>
+      <text class="branch-count" x="180" y="53">5 篇</text>
+    </g>
+  </g>
+  <g class="relation-layer"><path class="relation" data-relation="rel-1" data-source="system-0" data-target="system-2" d="M 562 182 C 616 182, 956 182, 1010 182" stroke="#7654a3" marker-end="url(#arrow-combines)"/><path class="relation" data-relation="rel-2" data-source="system-1" data-target="system-2" d="M 912 182 C 966 182, 956 182, 1010 182" stroke="#7a617f" marker-end="url(#arrow-migrates_problem)"/><path class="relation" data-relation="rel-3" data-source="system-1" data-target="system-3" d="M 912 182 C 966 182, 956 264, 1010 264" stroke="#2b6ca3" marker-end="url(#arrow-improves)"/><path class="relation" data-relation="rel-4" data-source="sparse-0" data-target="sparse-1" d="M 912 470 C 966 470, 956 470, 1010 470" stroke="#2b6ca3" marker-end="url(#arrow-improves)"/><path class="relation" data-relation="rel-5" data-source="sparse-1" data-target="sparse-2" d="M 1262 470 C 1316 470, 1306 470, 1360 470" stroke="#2b6ca3" marker-end="url(#arrow-improves)"/><path class="relation" data-relation="rel-6" data-source="kv-3" data-target="sparse-3" d="M 912 922 C 966 922, 956 552, 1010 552" stroke="#2b6ca3" marker-end="url(#arrow-improves)"/><path class="relation" data-relation="rel-7" data-source="sparse-1" data-target="sparse-4" d="M 1136 504 C 1136 538, 1136 702, 1136 668" stroke="#a06a22" marker-end="url(#arrow-contrasts)"/><path class="relation" data-relation="rel-8" data-source="kv-0" data-target="kv-1" d="M 436 874 C 436 908, 436 990, 436 956" stroke="#33765f" marker-end="url(#arrow-extends)"/><path class="relation" data-relation="rel-9" data-source="kv-0" data-target="kv-2" d="M 562 840 C 616 840, 606 840, 660 840" stroke="#a06a22" marker-end="url(#arrow-contrasts)"/><path class="relation" data-relation="rel-10" data-source="kv-0" data-target="kv-3" d="M 562 840 C 616 840, 606 922, 660 922" stroke="#7a617f" marker-end="url(#arrow-migrates_problem)"/><path class="relation" data-relation="rel-11" data-source="kv-3" data-target="kv-4" d="M 786 956 C 786 990, 786 1072, 786 1038" stroke="#a06a22" marker-end="url(#arrow-contrasts)"/><path class="relation" data-relation="rel-12" data-source="kv-0" data-target="kv-5" d="M 562 840 C 616 840, 606 1086, 660 1086" stroke="#2b6ca3" marker-end="url(#arrow-improves)"/><path class="relation" data-relation="rel-13" data-source="kv-0" data-target="kv-7" d="M 562 840 C 616 840, 606 1250, 660 1250" stroke="#7654a3" marker-end="url(#arrow-combines)"/><path class="relation" data-relation="rel-14" data-source="kv-6" data-target="kv-8" d="M 786 1202 C 786 1236, 786 1400, 786 1366" stroke="#2b6ca3" marker-end="url(#arrow-improves)"/><path class="relation" data-relation="rel-15" data-source="kv-4" data-target="kv-9" d="M 912 1004 C 966 1004, 956 840, 1010 840" stroke="#2b6ca3" marker-end="url(#arrow-improves)"/><path class="relation" data-relation="rel-16" data-source="kv-4" data-target="kv-10" d="M 912 1004 C 966 1004, 956 922, 1010 922" stroke="#a34d3f" marker-end="url(#arrow-replaces)"/><path class="relation" data-relation="rel-17" data-source="kv-0" data-target="kv-11" d="M 562 840 C 616 840, 956 1004, 1010 1004" stroke="#2b6ca3" marker-end="url(#arrow-improves)"/><path class="relation" data-relation="rel-18" data-source="kv-6" data-target="kv-12" d="M 912 1168 C 966 1168, 956 1086, 1010 1086" stroke="#2b6ca3" marker-end="url(#arrow-improves)"/><path class="relation" data-relation="rel-19" data-source="kv-8" data-target="kv-13" d="M 912 1332 C 966 1332, 956 1168, 1010 1168" stroke="#7654a3" marker-end="url(#arrow-combines)"/><path class="relation" data-relation="rel-20" data-source="kv-3" data-target="kv-13" d="M 912 922 C 966 922, 956 1168, 1010 1168" stroke="#7654a3" marker-end="url(#arrow-combines)"/><path class="relation" data-relation="rel-21" data-source="alt-3" data-target="alt-5" d="M 786 1572 C 786 1606, 786 1770, 786 1736" stroke="#2b6ca3" marker-end="url(#arrow-improves)"/><path class="relation" data-relation="rel-22" data-source="alt-2" data-target="alt-4" d="M 562 1702 C 616 1702, 606 1620, 660 1620" stroke="#2b6ca3" marker-end="url(#arrow-improves)"/><path class="relation" data-relation="rel-23" data-source="alt-4" data-target="alt-6" d="M 786 1654 C 786 1688, 786 1852, 786 1818" stroke="#7654a3" marker-end="url(#arrow-combines)"/><path class="relation" data-relation="rel-24" data-source="alt-3" data-target="alt-7" d="M 786 1572 C 786 1606, 786 1934, 786 1900" stroke="#7654a3" marker-end="url(#arrow-combines)"/><path class="relation" data-relation="rel-25" data-source="alt-6" data-target="alt-7" d="M 786 1818 C 786 1852, 786 1934, 786 1900" stroke="#7654a3" marker-end="url(#arrow-combines)"/><path class="relation" data-relation="rel-26" data-source="brain-0" data-target="brain-1" d="M 562 2072 C 616 2072, 606 2072, 660 2072" stroke="#2e827f" marker-end="url(#arrow-inspires)"/><path class="relation" data-relation="rel-27" data-source="brain-1" data-target="brain-3" d="M 912 2072 C 966 2072, 956 2072, 1010 2072" stroke="#7a617f" marker-end="url(#arrow-migrates_problem)"/></g>
+  <g class="paper-layer"><g class="paper-node" data-paper-id="system-0" tabindex="0" role="button" aria-label="PagedAttention，分页式注意力：KV 分页管理" transform="translate(310 148)">
+    <rect width="252" height="68" rx="6" stroke="#2c6ca3"/>
+    <text class="paper-title" x="12" y="20">PagedAttention</text>
+    <text class="paper-title-zh" x="12" y="39">分页式注意力：KV 分页管理</text>
+    <text class="paper-meta" x="12" y="57">SOSP 2023 · Kwon et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="system-1" tabindex="0" role="button" aria-label="FlashAttention-2，闪存注意力 2：更优并行" transform="translate(660 148)">
+    <rect width="252" height="68" rx="6" stroke="#2c6ca3"/>
+    <text class="paper-title" x="12" y="20">FlashAttention-2</text>
+    <text class="paper-title-zh" x="12" y="39">闪存注意力 2：更优并行</text>
+    <text class="paper-meta" x="12" y="57">ICLR 2024 · Dao</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="system-2" tabindex="0" role="button" aria-label="FlashInfer，高效可定制注意力推理引擎" transform="translate(1010 148)">
+    <rect width="252" height="68" rx="6" stroke="#2c6ca3"/>
+    <text class="paper-title" x="12" y="20">FlashInfer</text>
+    <text class="paper-title-zh" x="12" y="39">高效可定制注意力推理引擎</text>
+    <text class="paper-meta" x="12" y="57">MLSys 2025 · Ye et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="system-3" tabindex="0" role="button" aria-label="SageAttention，精确的 8 位注意力" transform="translate(1010 230)">
+    <rect width="252" height="68" rx="6" stroke="#2c6ca3"/>
+    <text class="paper-title" x="12" y="20">SageAttention</text>
+    <text class="paper-title-zh" x="12" y="39">精确的 8 位注意力</text>
+    <text class="paper-meta" x="12" y="57">ICLR 2025 · Zhang et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="sparse-0" tabindex="0" role="button" aria-label="MInference 1.0，动态稀疏长上下文预填充" transform="translate(660 436)">
+    <rect width="252" height="68" rx="6" stroke="#b86721"/>
+    <text class="paper-title" x="12" y="20">MInference 1.0</text>
+    <text class="paper-title-zh" x="12" y="39">动态稀疏长上下文预填充</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2024 · Jiang et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="sparse-1" tabindex="0" role="button" aria-label="HiP Attention，层级剪枝注意力" transform="translate(1010 436)">
+    <rect width="252" height="68" rx="6" stroke="#b86721"/>
+    <text class="paper-title" x="12" y="20">HiP Attention</text>
+    <text class="paper-title-zh" x="12" y="39">层级剪枝注意力</text>
+    <text class="paper-meta" x="12" y="57">ICLR 2025 · Lee et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="sparse-2" tabindex="0" role="button" aria-label="RetroAttention，回溯式稀疏注意力" transform="translate(1360 436)">
+    <rect width="252" height="68" rx="6" stroke="#b86721"/>
+    <text class="paper-title" x="12" y="20">RetroAttention</text>
+    <text class="paper-title-zh" x="12" y="39">回溯式稀疏注意力</text>
+    <text class="paper-meta" x="12" y="57">ICLR 2026 · Zhang et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="sparse-3" tabindex="0" role="button" aria-label="Spotlight Attention，聚光注意力：哈希 KV 检索" transform="translate(1010 518)">
+    <rect width="252" height="68" rx="6" stroke="#b86721"/>
+    <text class="paper-title" x="12" y="20">Spotlight Attention</text>
+    <text class="paper-title-zh" x="12" y="39">聚光注意力：哈希 KV 检索</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2025 · Li et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="sparse-4" tabindex="0" role="button" aria-label="Multipole Attention，多极注意力：关键精确、其余近似" transform="translate(1010 600)">
+    <rect width="252" height="68" rx="6" stroke="#b86721"/>
+    <text class="paper-title" x="12" y="20">Multipole Attention</text>
+    <text class="paper-title-zh" x="12" y="39">多极注意力：关键精确、其余近似</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2025 · Hooper et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-0" tabindex="0" role="button" aria-label="H2O，重击 token 的 KV 保留" transform="translate(310 806)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">H2O</text>
+    <text class="paper-title-zh" x="12" y="39">重击 token 的 KV 保留</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2023 · Zhang et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-1" tabindex="0" role="button" aria-label="Scissorhands，注意力重要性持久性裁剪" transform="translate(310 888)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">Scissorhands</text>
+    <text class="paper-title-zh" x="12" y="39">注意力重要性持久性裁剪</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2023 · Liu et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-2" tabindex="0" role="button" aria-label="StreamingLLM，流式 LLM：注意力汇点与滑窗" transform="translate(660 806)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">StreamingLLM</text>
+    <text class="paper-title-zh" x="12" y="39">流式 LLM：注意力汇点与滑窗</text>
+    <text class="paper-meta" x="12" y="57">ICLR 2024 · Xiao et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-3" tabindex="0" role="button" aria-label="QUEST，查询感知的稀疏 KV 检索" transform="translate(660 888)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">QUEST</text>
+    <text class="paper-title-zh" x="12" y="39">查询感知的稀疏 KV 检索</text>
+    <text class="paper-meta" x="12" y="57">ICML 2024 · Tang et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-4" tabindex="0" role="button" aria-label="SnapKV，按头观察窗口压缩" transform="translate(660 970)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">SnapKV</text>
+    <text class="paper-title-zh" x="12" y="39">按头观察窗口压缩</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2024 · Li et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-5" tabindex="0" role="button" aria-label="ArkVale，可召回的 KV 淘汰" transform="translate(660 1052)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">ArkVale</text>
+    <text class="paper-title-zh" x="12" y="39">可召回的 KV 淘汰</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2024 · Xu et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-6" tabindex="0" role="button" aria-label="CSKV，通道收缩 KV 压缩" transform="translate(660 1134)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">CSKV</text>
+    <text class="paper-title-zh" x="12" y="39">通道收缩 KV 压缩</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2024 · Zhang et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-7" tabindex="0" role="button" aria-label="ZipCache，显著性感知 KV 量化" transform="translate(660 1216)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">ZipCache</text>
+    <text class="paper-title-zh" x="12" y="39">显著性感知 KV 量化</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2024 · He et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-8" tabindex="0" role="button" aria-label="LoRC，渐进低秩 KV 压缩" transform="translate(660 1298)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">LoRC</text>
+    <text class="paper-title-zh" x="12" y="39">渐进低秩 KV 压缩</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2024 · Shi et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-9" tabindex="0" role="button" aria-label="Ada-KV，按头自适应缓存预算" transform="translate(1010 806)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">Ada-KV</text>
+    <text class="paper-title-zh" x="12" y="39">按头自适应缓存预算</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2025 · Feng et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-10" tabindex="0" role="button" aria-label="AttentionPredictor，时序模式驱动的 KV 预测" transform="translate(1010 888)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">AttentionPredictor</text>
+    <text class="paper-title-zh" x="12" y="39">时序模式驱动的 KV 预测</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2025 · Yang et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-11" tabindex="0" role="button" aria-label="AnDPro，锚方向投影的精确 KV 淘汰" transform="translate(1010 970)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">AnDPro</text>
+    <text class="paper-title-zh" x="12" y="39">锚方向投影的精确 KV 淘汰</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2025 · Geng et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-12" tabindex="0" role="button" aria-label="AsymKV，键同质、值异质的非对称压缩" transform="translate(1010 1052)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">AsymKV</text>
+    <text class="paper-title-zh" x="12" y="39">键同质、值异质的非对称压缩</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2025 · Cui &amp; Xu</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="kv-13" tabindex="0" role="button" aria-label="SALS，潜空间稀疏注意力与 KV 压缩" transform="translate(1010 1134)">
+    <rect width="252" height="68" rx="6" stroke="#40844a"/>
+    <text class="paper-title" x="12" y="20">SALS</text>
+    <text class="paper-title-zh" x="12" y="39">潜空间稀疏注意力与 KV 压缩</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2025 · Mu et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="alt-0" tabindex="0" role="button" aria-label="Hyena Hierarchy，Hyena 层级：长卷积序列混合" transform="translate(310 1504)">
+    <rect width="252" height="68" rx="6" stroke="#6f5d9e"/>
+    <text class="paper-title" x="12" y="20">Hyena Hierarchy</text>
+    <text class="paper-title-zh" x="12" y="39">Hyena 层级：长卷积序列混合</text>
+    <text class="paper-meta" x="12" y="57">ICML 2023 · Poli et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="alt-1" tabindex="0" role="button" aria-label="Monarch Mixer，结构化子二次序列混合器" transform="translate(310 1586)">
+    <rect width="252" height="68" rx="6" stroke="#6f5d9e"/>
+    <text class="paper-title" x="12" y="20">Monarch Mixer</text>
+    <text class="paper-title-zh" x="12" y="39">结构化子二次序列混合器</text>
+    <text class="paper-meta" x="12" y="57">ICLR 2023 · Fu et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="alt-2" tabindex="0" role="button" aria-label="TransNormerLLM，线性化长文本语言模型" transform="translate(310 1668)">
+    <rect width="252" height="68" rx="6" stroke="#6f5d9e"/>
+    <text class="paper-title" x="12" y="20">TransNormerLLM</text>
+    <text class="paper-title-zh" x="12" y="39">线性化长文本语言模型</text>
+    <text class="paper-meta" x="12" y="57">ACL 2023 · Qin et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="alt-3" tabindex="0" role="button" aria-label="Mamba，选择性状态空间模型" transform="translate(660 1504)">
+    <rect width="252" height="68" rx="6" stroke="#6f5d9e"/>
+    <text class="paper-title" x="12" y="20">Mamba</text>
+    <text class="paper-title-zh" x="12" y="39">选择性状态空间模型</text>
+    <text class="paper-meta" x="12" y="57">COLM 2024 · Gu &amp; Dao</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="alt-4" tabindex="0" role="button" aria-label="GLA，门控线性注意力" transform="translate(660 1586)">
+    <rect width="252" height="68" rx="6" stroke="#6f5d9e"/>
+    <text class="paper-title" x="12" y="20">GLA</text>
+    <text class="paper-title-zh" x="12" y="39">门控线性注意力</text>
+    <text class="paper-meta" x="12" y="57">ICML 2024 · Yang et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="alt-5" tabindex="0" role="button" aria-label="Mamba-2 / SSD，Mamba-2：状态空间对偶" transform="translate(660 1668)">
+    <rect width="252" height="68" rx="6" stroke="#6f5d9e"/>
+    <text class="paper-title" x="12" y="20">Mamba-2 / SSD</text>
+    <text class="paper-title-zh" x="12" y="39">Mamba-2：状态空间对偶</text>
+    <text class="paper-meta" x="12" y="57">ICML 2024 · Dao &amp; Gu</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="alt-6" tabindex="0" role="button" aria-label="Based，局部卷积加线性注意力" transform="translate(660 1750)">
+    <rect width="252" height="68" rx="6" stroke="#6f5d9e"/>
+    <text class="paper-title" x="12" y="20">Based</text>
+    <text class="paper-title-zh" x="12" y="39">局部卷积加线性注意力</text>
+    <text class="paper-meta" x="12" y="57">ICML 2024 · Arora et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="alt-7" tabindex="0" role="button" aria-label="Griffin，门控递推加局部注意力" transform="translate(660 1832)">
+    <rect width="252" height="68" rx="6" stroke="#6f5d9e"/>
+    <text class="paper-title" x="12" y="20">Griffin</text>
+    <text class="paper-title-zh" x="12" y="39">门控递推加局部注意力</text>
+    <text class="paper-meta" x="12" y="57">ICML 2024 · De et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="brain-0" tabindex="0" role="button" aria-label="Transformer as hippocampal memory consolidation，Transformer 作为海马记忆巩固机制" transform="translate(310 2038)">
+    <rect width="252" height="68" rx="6" stroke="#a14e49"/>
+    <text class="paper-title" x="12" y="20">Transformer as hippocampal memory…</text>
+    <text class="paper-title-zh" x="12" y="39">Transformer 作为海马记忆…</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2023 · Cui et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="brain-1" tabindex="0" role="button" aria-label="SDMTR，共享双记忆 Transformer" transform="translate(660 2038)">
+    <rect width="252" height="68" rx="6" stroke="#a14e49"/>
+    <text class="paper-title" x="12" y="20">SDMTR</text>
+    <text class="paper-title-zh" x="12" y="39">共享双记忆 Transformer</text>
+    <text class="paper-meta" x="12" y="57">AISTATS 2024 · Zeng et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="brain-2" tabindex="0" role="button" aria-label="SpikeVoice / STSA，脉冲时序-序列注意力" transform="translate(660 2120)">
+    <rect width="252" height="68" rx="6" stroke="#a14e49"/>
+    <text class="paper-title" x="12" y="20">SpikeVoice / STSA</text>
+    <text class="paper-title-zh" x="12" y="39">脉冲时序-序列注意力</text>
+    <text class="paper-meta" x="12" y="57">ACL 2024 · Wang et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="brain-3" tabindex="0" role="button" aria-label="PaceLLM，脑启发长上下文 LLM" transform="translate(1010 2038)">
+    <rect width="252" height="68" rx="6" stroke="#a14e49"/>
+    <text class="paper-title" x="12" y="20">PaceLLM</text>
+    <text class="paper-title-zh" x="12" y="39">脑启发长上下文 LLM</text>
+    <text class="paper-meta" x="12" y="57">NeurIPS 2025 · Li et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g><g class="paper-node" data-paper-id="brain-4" tabindex="0" role="button" aria-label="Spiking Discrepancy Transformer，脉冲差异 Transformer" transform="translate(1360 2038)">
+    <rect width="252" height="68" rx="6" stroke="#a14e49"/>
+    <text class="paper-title" x="12" y="20">Spiking Discrepancy Transformer</text>
+    <text class="paper-title-zh" x="12" y="39">脉冲差异 Transformer</text>
+    <text class="paper-meta" x="12" y="57">ICLR 2026 · Lu et al.</text>
+    <g class="status-marker missing" transform="translate(225 9)"><circle cx="10" cy="10" r="10"/><text x="10" y="13">待</text></g>
+  </g></g>
+</svg></div></section>
+  <p class="tip">提示：点论文节点会锁定并高亮它的关系，再点一次解除；详情在屏幕底部出现。内置示例 PDF 可离线阅读。</p>
+  <section class="directory"><header><div><p class="kicker">PAPER DIRECTORY</p><h2>论文目录</h2></div><p>目录与树节点联动</p></header><details class="directory-group"><summary><span style="--branch:#2c6ca3">A. 系统与精确核</span><small>4 篇</small></summary><div><button type="button" data-directory-paper="system-0"><b>PagedAttention</b><span>分页式注意力：KV 分页管理</span><small>2023 · SOSP 2023</small></button><button type="button" data-directory-paper="system-1"><b>FlashAttention-2</b><span>闪存注意力 2：更优并行</span><small>2024 · ICLR 2024</small></button><button type="button" data-directory-paper="system-2"><b>FlashInfer</b><span>高效可定制注意力推理引擎</span><small>2025 · MLSys 2025</small></button><button type="button" data-directory-paper="system-3"><b>SageAttention</b><span>精确的 8 位注意力</span><small>2025 · ICLR 2025</small></button></div></details><details class="directory-group"><summary><span style="--branch:#b86721">B. 稀疏检索与动态选择</span><small>5 篇</small></summary><div><button type="button" data-directory-paper="sparse-0"><b>MInference 1.0</b><span>动态稀疏长上下文预填充</span><small>2024 · NeurIPS 2024</small></button><button type="button" data-directory-paper="sparse-1"><b>HiP Attention</b><span>层级剪枝注意力</span><small>2025 · ICLR 2025</small></button><button type="button" data-directory-paper="sparse-3"><b>Spotlight Attention</b><span>聚光注意力：哈希 KV 检索</span><small>2025 · NeurIPS 2025</small></button><button type="button" data-directory-paper="sparse-4"><b>Multipole Attention</b><span>多极注意力：关键精确、其余近似</span><small>2025 · NeurIPS 2025</small></button><button type="button" data-directory-paper="sparse-2"><b>RetroAttention</b><span>回溯式稀疏注意力</span><small>2026 · ICLR 2026</small></button></div></details><details class="directory-group"><summary><span style="--branch:#40844a">C. KV 记忆管理</span><small>14 篇</small></summary><div><button type="button" data-directory-paper="kv-0"><b>H2O</b><span>重击 token 的 KV 保留</span><small>2023 · NeurIPS 2023</small></button><button type="button" data-directory-paper="kv-1"><b>Scissorhands</b><span>注意力重要性持久性裁剪</span><small>2023 · NeurIPS 2023</small></button><button type="button" data-directory-paper="kv-2"><b>StreamingLLM</b><span>流式 LLM：注意力汇点与滑窗</span><small>2024 · ICLR 2024</small></button><button type="button" data-directory-paper="kv-3"><b>QUEST</b><span>查询感知的稀疏 KV 检索</span><small>2024 · ICML 2024</small></button><button type="button" data-directory-paper="kv-4"><b>SnapKV</b><span>按头观察窗口压缩</span><small>2024 · NeurIPS 2024</small></button><button type="button" data-directory-paper="kv-5"><b>ArkVale</b><span>可召回的 KV 淘汰</span><small>2024 · NeurIPS 2024</small></button><button type="button" data-directory-paper="kv-6"><b>CSKV</b><span>通道收缩 KV 压缩</span><small>2024 · NeurIPS 2024</small></button><button type="button" data-directory-paper="kv-7"><b>ZipCache</b><span>显著性感知 KV 量化</span><small>2024 · NeurIPS 2024</small></button><button type="button" data-directory-paper="kv-8"><b>LoRC</b><span>渐进低秩 KV 压缩</span><small>2024 · NeurIPS 2024</small></button><button type="button" data-directory-paper="kv-9"><b>Ada-KV</b><span>按头自适应缓存预算</span><small>2025 · NeurIPS 2025</small></button><button type="button" data-directory-paper="kv-10"><b>AttentionPredictor</b><span>时序模式驱动的 KV 预测</span><small>2025 · NeurIPS 2025</small></button><button type="button" data-directory-paper="kv-11"><b>AnDPro</b><span>锚方向投影的精确 KV 淘汰</span><small>2025 · NeurIPS 2025</small></button><button type="button" data-directory-paper="kv-12"><b>AsymKV</b><span>键同质、值异质的非对称压缩</span><small>2025 · NeurIPS 2025</small></button><button type="button" data-directory-paper="kv-13"><b>SALS</b><span>潜空间稀疏注意力与 KV 压缩</span><small>2025 · NeurIPS 2025</small></button></div></details><details class="directory-group"><summary><span style="--branch:#6f5d9e">D. 线性 / 状态替代</span><small>8 篇</small></summary><div><button type="button" data-directory-paper="alt-0"><b>Hyena Hierarchy</b><span>Hyena 层级：长卷积序列混合</span><small>2023 · ICML 2023</small></button><button type="button" data-directory-paper="alt-1"><b>Monarch Mixer</b><span>结构化子二次序列混合器</span><small>2023 · ICLR 2023</small></button><button type="button" data-directory-paper="alt-2"><b>TransNormerLLM</b><span>线性化长文本语言模型</span><small>2023 · ACL 2023</small></button><button type="button" data-directory-paper="alt-3"><b>Mamba</b><span>选择性状态空间模型</span><small>2024 · COLM 2024</small></button><button type="button" data-directory-paper="alt-4"><b>GLA</b><span>门控线性注意力</span><small>2024 · ICML 2024</small></button><button type="button" data-directory-paper="alt-5"><b>Mamba-2 / SSD</b><span>Mamba-2：状态空间对偶</span><small>2024 · ICML 2024</small></button><button type="button" data-directory-paper="alt-6"><b>Based</b><span>局部卷积加线性注意力</span><small>2024 · ICML 2024</small></button><button type="button" data-directory-paper="alt-7"><b>Griffin</b><span>门控递推加局部注意力</span><small>2024 · ICML 2024</small></button></div></details><details class="directory-group"><summary><span style="--branch:#a14e49">E. 脑启发选择与记忆</span><small>5 篇</small></summary><div><button type="button" data-directory-paper="brain-0"><b>Transformer as hippocampal memory consolidation</b><span>Transformer 作为海马记忆巩固机制</span><small>2023 · NeurIPS 2023</small></button><button type="button" data-directory-paper="brain-1"><b>SDMTR</b><span>共享双记忆 Transformer</span><small>2024 · AISTATS 2024</small></button><button type="button" data-directory-paper="brain-2"><b>SpikeVoice / STSA</b><span>脉冲时序-序列注意力</span><small>2024 · ACL 2024</small></button><button type="button" data-directory-paper="brain-3"><b>PaceLLM</b><span>脑启发长上下文 LLM</span><small>2025 · NeurIPS 2025</small></button><button type="button" data-directory-paper="brain-4"><b>Spiking Discrepancy Transformer</b><span>脉冲差异 Transformer</span><small>2026 · ICLR 2026</small></button></div></details></section>
+</main>
+<div class="reader-backdrop" id="reader-backdrop"></div>
+<aside class="reader" id="reader" aria-live="polite"><div class="reader-handle"></div><header class="reader-head"><div><h2 id="reader-title">选择一篇论文</h2><p id="reader-title-zh"></p></div><button class="icon" id="close-reader" type="button" aria-label="关闭">×</button></header><div class="reader-body" id="reader-body"></div></aside>
+<footer class="privacy">隐私说明：本文件只包含公开论文元数据、一棵示例树和论文来源链接；不包含制作者的 API Key、上传记录、批注、浏览器数据或个人研究树。</footer>
+<script>
+const TREE={"id":"efficient-attention-demo","name":"高效 Attention","description":"2023–2026 的高效注意力研究脉络，重点呈现系统优化、稀疏检索、KV 记忆管理、状态替代与脑启发记忆。","branches":[{"id":"system","name":"A. 系统与精确核","question":"不近似，如何让 attention 的真实瓶颈更快？","color":"#2c6ca3"},{"id":"sparse","name":"B. 稀疏检索与动态选择","question":"先找少量候选 KV，再做精确 attention，能否免训练？","color":"#b86721"},{"id":"kv","name":"C. KV 记忆管理","question":"KV 是在线记忆：保留谁、压缩谁、何时召回？","color":"#40844a"},{"id":"alt","name":"D. 线性 / 状态替代","question":"能否不用显式全量 KV，而用可递推状态保存上下文？","color":"#6f5d9e"},{"id":"brain","name":"E. 脑启发选择与记忆","question":"稀疏竞争、工作记忆、长期记忆与事件驱动能给效率什么新约束？","color":"#a14e49"}],"papers":[{"id":"system-0","title":"PagedAttention","titleZh":"分页式注意力：KV 分页管理","authors":"Kwon et al.","year":2023,"venue":"SOSP 2023","problem":"把 KV cache 分块分页，解决服务端碎片与共享问题；它改变的是缓存管理，而非注意力数学。","method":"KV 分页 / serving","contribution":"为 FlashInfer 等推理核提供了系统层的落点。","url":"https://dl.acm.org/doi/10.1145/3600006.3613165","branchId":"system","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"system-1","title":"FlashAttention-2","titleZh":"闪存注意力 2：更优并行","authors":"Dao","year":2024,"venue":"ICLR 2024","problem":"通过更好的并行分工与 work partitioning 保持 exact attention，同时减少非矩阵乘法与 I/O 开销。","method":"精确 attention / I-O","contribution":"把“attention 慢”转成 GPU 调度问题，是后续硬件感知设计的基线。","url":"https://openreview.net/forum?id=mZn2Xyh9Ec","branchId":"system","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"system-2","title":"FlashInfer","titleZh":"高效可定制注意力推理引擎","authors":"Ye et al.","year":2025,"venue":"MLSys 2025","problem":"将注意力变体、KV layout 与批处理调度做成可组合推理引擎，服务不同模型与请求形态。","method":"kernel / serving","contribution":"承接 PagedAttention 的服务需求，并把 FlashAttention 类核工程化。","url":"https://arxiv.org/abs/2501.01005","branchId":"system","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"system-3","title":"SageAttention","titleZh":"精确的 8 位注意力","authors":"Zhang et al.","year":2025,"venue":"ICLR 2025","problem":"把 attention 本身纳入 8-bit 量化，针对 Q/K 与 softmax 的误差特性做补偿。","method":"attention quantization","contribution":"说明“精确/稀疏”之外，数值格式也是 attention 加速轴。","url":"https://proceedings.iclr.cc/paper_files/paper/2025/hash/b286c344d38e10d2466c0514b78e2f36-Abstract-Conference.html","branchId":"system","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"sparse-0","title":"MInference 1.0","titleZh":"动态稀疏长上下文预填充","authors":"Jiang et al.","year":2024,"venue":"NeurIPS 2024","problem":"观察不同头具有不同稀疏模式；按头动态选择 A-shape、vertical-slash、block-sparse 等近似策略。","method":"dynamic sparse prefill","contribution":"把静态 mask 推进到 head-wise、输入自适应的稀疏 prefill。","url":"https://arxiv.org/abs/2407.02490","branchId":"sparse","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"sparse-1","title":"HiP Attention","titleZh":"层级剪枝注意力","authors":"Lee et al.","year":2025,"venue":"ICLR 2025","problem":"利用 attention locality 分层搜索 top-k key，将训练后 LLM 的注意力降到近线性成本。","method":"hierarchical pruning","contribution":"从“启发式保留 token”推进到带树搜索与复杂度保证的在线检索。","url":"https://proceedings.iclr.cc/paper_files/paper/2025/hash/043f0503c4f652c737add3690aa5d12c-Abstract-Conference.html","branchId":"sparse","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"sparse-2","title":"RetroAttention","titleZh":"回溯式稀疏注意力","authors":"Zhang et al.","year":2026,"venue":"ICLR 2026","problem":"允许新到的 KV 反过来修正过去已近似的 attention 输出，处理稀疏更新的“未来信息缺失”。","method":"retrospective sparse","contribution":"指出传统单向 KV 更新不可逆；把 sparse attention 推向可回溯更新。","url":"https://proceedings.iclr.cc/paper_files/paper/2026/hash/f4daa773a5bb2d562a9204a7e2225a67-Abstract-Conference.html","branchId":"sparse","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"sparse-3","title":"Spotlight Attention","titleZh":"聚光注意力：哈希 KV 检索","authors":"Li et al.","year":2025,"venue":"NeurIPS 2025","problem":"用非线性哈希重塑 query/key 编码分布，以位运算完成超长 KV 的快速检索。","method":"hash retrieval","contribution":"接续 QUEST：重点不是删缓存，而是更快、更准地从缓存中找候选。","url":"https://proceedings.neurips.cc/paper_files/paper/2025/hash/7c799b09cc40973ceaa47da50131dc63-Abstract-Conference.html","branchId":"sparse","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"sparse-4","title":"Multipole Attention","titleZh":"多极注意力：关键精确、其余近似","authors":"Hooper et al.","year":2025,"venue":"NeurIPS 2025","problem":"对少数关键 token 精确计算，对余下 token 用簇中心近似，面向长 CoT 推理降低稀疏误差。","method":"exact + residual approximation","contribution":"回应“强稀疏会破坏推理链”的问题。","url":"https://proceedings.neurips.cc/paper_files/paper/2025/hash/359f442022ef31bcd9e41959576107ef-Abstract-Conference.html","branchId":"sparse","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-0","title":"H2O","titleZh":"重击 token 的 KV 保留","authors":"Zhang et al.","year":2023,"venue":"NeurIPS 2023","problem":"提出 heavy hitters：少量历史 token 持续贡献较大注意力；保留重近轻远的缓存。","method":"eviction / heavy hitter","contribution":"现代 KV eviction 的起点：先证明“重要性极不均匀”。","url":"https://proceedings.neurips.cc/paper_files/paper/2023/hash/6ceefa7b15572587b78ecfcebb2827f8-Abstract.html","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-1","title":"Scissorhands","titleZh":"注意力重要性持久性裁剪","authors":"Liu et al.","year":2023,"venue":"NeurIPS 2023","problem":"利用注意力重要性的持续性，在测试时裁掉低重要度 KV。","method":"persistence hypothesis","contribution":"与 H2O 共同奠定“历史重要性可预测”的经验前提。","url":"https://arxiv.org/abs/2305.17118","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-2","title":"StreamingLLM","titleZh":"流式 LLM：注意力汇点与滑窗","authors":"Xiao et al.","year":2024,"venue":"ICLR 2024","problem":"发现 attention sink；以少量 initial tokens + sliding window 支撑无限流式推理。","method":"sink + window","contribution":"把 H2O 的“重要历史”具体化为流式场景的固定锚点。","url":"https://openreview.net/forum?id=NG7sS51zVF","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-3","title":"QUEST","titleZh":"查询感知的稀疏 KV 检索","authors":"Tang et al.","year":2024,"venue":"ICML 2024","problem":"用 query 估计 KV page 的重要性，仅加载 top-k 页面；不再认为 token 重要性对所有 query 固定。","method":"query-aware retrieval","contribution":"纠正 H2O/Scissorhands 的静态性：重要性由当前 query 决定。","url":"https://proceedings.mlr.press/v235/tang24l.html","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-4","title":"SnapKV","titleZh":"按头观察窗口压缩","authors":"Li et al.","year":2024,"venue":"NeurIPS 2024","problem":"从 prompt 尾部 observation window 预测每个 head 会关注的 prompt 特征，再做 head-wise 压缩。","method":"head-wise cache","contribution":"将 query-aware 思路变成 head-specific 的 prefill 压缩。","url":"https://proceedings.neurips.cc/paper_files/paper/2024/hash/28ab418242603e0f7323e54185d19bde-Abstract-Conference.html","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-5","title":"ArkVale","titleZh":"可召回的 KV 淘汰","authors":"Xu et al.","year":2024,"venue":"NeurIPS 2024","problem":"采用可召回的 page eviction：被逐出的内容可以在需要时取回，而非永久遗忘。","method":"recallable eviction","contribution":"直接回应 eviction 的不可逆错误。","url":"https://proceedings.neurips.cc/paper_files/paper/2024/hash/cd4b49379efac6e84186a3ffce108c37-Abstract-Conference.html","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-6","title":"CSKV","titleZh":"通道收缩 KV 压缩","authors":"Zhang et al.","year":2024,"venue":"NeurIPS 2024","problem":"通过 channel shrinking 压缩 K/V 通道，并用小成本层级重建避免全模型再训练。","method":"channel compression","contribution":"换一条思路：不删 token，而是缩短每个 token 的表示。","url":"https://neurips.cc/virtual/2024/106465","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-7","title":"ZipCache","titleZh":"显著性感知 KV 量化","authors":"He et al.","year":2024,"venue":"NeurIPS 2024","problem":"显著 token 用更高精度，非显著 token 激进量化；同时保证与快速 attention 核兼容。","method":"saliency quantization","contribution":"把“重要性”从删除策略延伸为不均匀比特分配。","url":"https://proceedings.neurips.cc/paper_files/paper/2024/hash/7e57131fdeb815764434b65162c88895-Abstract-Conference.html","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-8","title":"LoRC","titleZh":"渐进低秩 KV 压缩","authors":"Shi et al.","year":2024,"venue":"NeurIPS 2024","problem":"对 KV 做逐层、渐进低秩压缩，强调跨层依赖而非逐层孤立决策。","method":"low-rank compression","contribution":"将缓存冗余从 token 维度扩展到表示的秩结构。","url":"https://neurips.cc/virtual/2024/106503","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-9","title":"Ada-KV","titleZh":"按头自适应缓存预算","authors":"Feng et al.","year":2025,"venue":"NeurIPS 2025","problem":"基于 attention-output 损失上界，为不同 head 分配不同 cache budget。","method":"adaptive budget","contribution":"推进 SnapKV：从“每头各自选 token”到“每头预算也不同”。","url":"https://proceedings.neurips.cc/paper_files/paper/2025/hash/a40ff56daab9f4808b1e18350c8a11ce-Abstract-Conference.html","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-10","title":"AttentionPredictor","titleZh":"时序模式驱动的 KV 预测","authors":"Yang et al.","year":2025,"venue":"NeurIPS 2025","problem":"用轻量卷积预测下一 token 的时空 attention pattern，并做预取。","method":"learned prediction","contribution":"挑战静态分数：重要性本身有时间动态，可学习预测。","url":"https://proceedings.neurips.cc/paper_files/paper/2025/hash/c9ffae6711fb9c28121795c80ec77b70-Abstract-Conference.html","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-11","title":"AnDPro","titleZh":"锚方向投影的精确 KV 淘汰","authors":"Geng et al.","year":2025,"venue":"NeurIPS 2025","problem":"在 value 向量空间，以 anchor direction 的投影衡量 token 贡献，而非只看注意力权重。","method":"value-aware scoring","contribution":"说明 attention weight 不是唯一的“价值”代理量。","url":"https://proceedings.neurips.cc/paper_files/paper/2025/hash/0f29157c7613e137834a607075c55e17-Abstract-Conference.html","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-12","title":"AsymKV","titleZh":"键同质、值异质的非对称压缩","authors":"Cui & Xu","year":2025,"venue":"NeurIPS 2025","problem":"发现相邻 key 局部同质、value 却异质；因此 key merge 与 value compression 应分开设计。","method":"K/V asymmetry","contribution":"反对将 K、V 一视同仁，是压缩粒度的再细分。","url":"https://proceedings.neurips.cc/paper_files/paper/2025/hash/750b0f9fccafad88e0da366315e03d1a-Abstract-Conference.html","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"kv-13","title":"SALS","titleZh":"潜空间稀疏注意力与 KV 压缩","authors":"Mu et al.","year":2025,"venue":"NeurIPS 2025","problem":"在 latent space 中执行稀疏 attention 与 KV 压缩，利用表示低秩性降低检索代价。","method":"latent sparse attention","contribution":"连接 LoRC 的低秩观点与 sparse retrieval 的候选选择。","url":"https://papers.neurips.cc/paper_files/paper/2025/file/00a0ebcad584c59dbc439c2af8793638-Paper-Conference.pdf","branchId":"kv","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"alt-0","title":"Hyena Hierarchy","titleZh":"Hyena 层级：长卷积序列混合","authors":"Poli et al.","year":2023,"venue":"ICML 2023","problem":"用长卷积与数据控制滤波器替代 attention 的全连接匹配，建立长序列 mixer 路线。","method":"long convolution","contribution":"为“非 attention 序列模型”给出强基线。","url":"https://proceedings.mlr.press/v202/poli23a.html","branchId":"alt","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"alt-1","title":"Monarch Mixer","titleZh":"结构化子二次序列混合器","authors":"Fu et al.","year":2023,"venue":"ICLR 2023","problem":"用结构化矩阵乘法实现子二次 token mixing，强调理论复杂度与通用序列建模。","method":"structured mixing","contribution":"与 Hyena 并列：用结构替代稠密 token-token 矩阵。","url":"https://openreview.net/forum?id=cvt3xbR9xQ","branchId":"alt","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"alt-2","title":"TransNormerLLM","titleZh":"线性化长文本语言模型","authors":"Qin et al.","year":2023,"venue":"ACL 2023","problem":"结合 lrpe、lightning attention 等设计，追求比标准 Transformer 更快的长文本语言建模。","method":"linearized transformer","contribution":"把线性化 attention 推到 LLM 架构级。","url":"https://arxiv.org/abs/2301.12780","branchId":"alt","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"alt-3","title":"Mamba","titleZh":"选择性状态空间模型","authors":"Gu & Dao","year":2024,"venue":"COLM 2024","problem":"Selective SSM 让状态转移随输入而变，用固定大小状态实现线性序列处理。","method":"selective SSM","contribution":"把“选择什么”内化到状态更新，而不是显式 QK 检索。","url":"https://arxiv.org/abs/2312.00752","branchId":"alt","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"alt-4","title":"GLA","titleZh":"门控线性注意力","authors":"Yang et al.","year":2024,"venue":"ICML 2024","problem":"为 linear attention 加数据依赖门控，并以硬件高效并行算法弥补线性模型的速度短板。","method":"gated linear attention","contribution":"把状态选择与 attention 形式重新结合。","url":"https://proceedings.mlr.press/v235/yang24ab.html","branchId":"alt","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"alt-5","title":"Mamba-2 / SSD","titleZh":"Mamba-2：状态空间对偶","authors":"Dao & Gu","year":2024,"venue":"ICML 2024","problem":"提出 structured state-space duality，说明部分 attention 与 SSM 属于同一结构化矩阵族，并得到更快 Mamba-2。","method":"SSM-attention duality","contribution":"理论上把“替代 attention”改写为“attention 的另一种参数化”。","url":"https://mlanthology.org/icml/2024/dao2024icml-transformers/","branchId":"alt","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"alt-6","title":"Based","titleZh":"局部卷积加线性注意力","authors":"Arora et al.","year":2024,"venue":"ICML 2024","problem":"以短卷积补局部、线性 attention 保全局，在 recall 与 throughput 之间折中。","method":"hybrid linear attention","contribution":"承认纯线性模型的 recall 弱点，转向局部+全局混合。","url":"https://arxiv.org/abs/2402.18668","branchId":"alt","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"alt-7","title":"Griffin","titleZh":"门控递推加局部注意力","authors":"De et al.","year":2024,"venue":"ICML 2024","problem":"混合 gated linear recurrence 与 local attention，保留局部精确检索并压低长程成本。","method":"recurrent-attention hybrid","contribution":"与 Based 同一结论：完全替代往往不如混合架构实用。","url":"https://arxiv.org/abs/2402.19427","branchId":"alt","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"brain-0","title":"Transformer as hippocampal memory consolidation","titleZh":"Transformer 作为海马记忆巩固机制","authors":"Cui et al.","year":2023,"venue":"NeurIPS 2023","problem":"用海马记忆巩固视角分析 Transformer 中工作/参考记忆及 attention、FFN 的分工。","method":"hippocampal analysis","contribution":"它不是高效核，但给“记忆应分层、分工”的机制解释。","url":"https://proceedings.neurips.cc/paper_files/paper/2023/file/2f1eb4c897e63870eee9a0a0f7a10332-Paper-Conference.pdf","branchId":"brain","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"brain-1","title":"SDMTR","titleZh":"共享双记忆 Transformer","authors":"Zeng et al.","year":2024,"venue":"AISTATS 2024","problem":"以 Global Workspace 与长期记忆为灵感，有限共享 workspace 竞争写入，再用 outer-product attention 固化。","method":"workspace + LTM","contribution":"把选择性写入变成结构模块；与 KV eviction 的“保留什么”形成概念桥。","url":"https://proceedings.mlr.press/v238/zeng24a.html","branchId":"brain","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"brain-2","title":"SpikeVoice / STSA","titleZh":"脉冲时序-序列注意力","authors":"Wang et al.","year":2024,"venue":"ACL 2024","problem":"用脉冲时序-序列 attention 处理 TTS 长程依赖，以事件驱动 SNN 换取显著能耗优势。","method":"spiking attention","contribution":"提供另一条效率度量：不只 FLOPs/显存，也包括神经形态能耗。","url":"https://aclanthology.org/2024.acl-long.429/","branchId":"brain","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"brain-3","title":"PaceLLM","titleZh":"脑启发长上下文 LLM","authors":"Li et al.","year":2025,"venue":"NeurIPS 2025","problem":"以 PFC persistent activity 建 activation memory bank，并以 cortical experts 做模块化语义组织。","method":"working memory / modularity","contribution":"把工作记忆与专家分工直接用于长上下文 LLM，强调与 KV 优化互补。","url":"https://proceedings.neurips.cc/paper_files/paper/2025/hash/7b9ebf1a1c149960c3452dc94cbd158e-Abstract-Conference.html","branchId":"brain","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1},{"id":"brain-4","title":"Spiking Discrepancy Transformer","titleZh":"脉冲差异 Transformer","authors":"Lu et al.","year":2026,"venue":"ICLR 2026","problem":"以 spike discrepancy 强化关键几何信息，构造稀疏、低能耗的 spiking self-attention。","method":"event-driven sparse attention","contribution":"将“只对显著变化计算”具体化为 spike 事件与差异驱动机制。","url":"https://openreview.net/forum?id=7Brnh0aNFn","branchId":"brain","accessStatus":"metadata_only","analysisBasis":"abstract","confidence":1}],"relations":[{"id":"rel-1","sourceId":"system-0","targetId":"system-2","type":"combines","explanation":"FlashInfer 将 PagedAttention 的分页式 KV 管理与可定制注意力内核、批处理调度结合，形成面向多种推理负载的统一引擎。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-2","sourceId":"system-1","targetId":"system-2","type":"migrates_problem","explanation":"FlashInfer 把 FlashAttention-2 的硬件感知精确计算思路迁移到在线推理场景，进一步处理 KV 布局、动态批处理与算子组合问题。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-3","sourceId":"system-1","targetId":"system-3","type":"improves","explanation":"SageAttention 保留 FlashAttention-2 的硬件高效计算目标，并通过 8 位量化与误差补偿进一步降低注意力计算成本。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-4","sourceId":"sparse-0","targetId":"sparse-1","type":"improves","explanation":"HiP Attention 延续动态稀疏选择路线，以层级剪枝缩小候选范围，改进了长上下文中逐头稀疏模式搜索的效率。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-5","sourceId":"sparse-1","targetId":"sparse-2","type":"improves","explanation":"RetroAttention 在层级稀疏检索基础上加入回溯机制，针对早期筛选可能遗漏关键 token 的问题补充恢复路径。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-6","sourceId":"kv-3","targetId":"sparse-3","type":"improves","explanation":"Spotlight Attention 延续 QUEST 的查询感知 KV 检索目标，并以哈希索引改进候选定位方式，减少长缓存上的逐块扫描。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-7","sourceId":"sparse-1","targetId":"sparse-4","type":"contrasts","explanation":"两者都降低长上下文注意力成本；HiP 侧重剪枝掉低价值候选，Multipole 则保留关键项精确计算并近似聚合其余项。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-8","sourceId":"kv-0","targetId":"kv-1","type":"extends","explanation":"Scissorhands 延续 H2O 的重要 token 保留思路，并从注意力重要性的时间持久性出发制定持续裁剪规则。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-9","sourceId":"kv-0","targetId":"kv-2","type":"contrasts","explanation":"两者都控制有限 KV 预算；H2O 根据累计注意力保留重击 token，StreamingLLM 则依靠注意力汇点与滑动窗口维持流式稳定性。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-10","sourceId":"kv-0","targetId":"kv-3","type":"migrates_problem","explanation":"QUEST 将 H2O 的静态保留问题迁移为面向当前查询的在线检索问题，从长期累计重要性转向每次解码时选择相关 KV。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-11","sourceId":"kv-3","targetId":"kv-4","type":"contrasts","explanation":"QUEST 在每次查询时检索相关 KV，SnapKV 则利用观察窗口形成按头压缩快照；二者代表动态检索与预先压缩两种路线。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-12","sourceId":"kv-0","targetId":"kv-5","type":"improves","explanation":"ArkVale 改进 H2O 式淘汰后不可恢复的限制，为被移出的 KV 保留召回机制，以降低后续查询重新需要旧信息时的损失。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-13","sourceId":"kv-0","targetId":"kv-7","type":"combines","explanation":"ZipCache 接受 H2O 的显著性判断思路，但不只做淘汰，而是把重要性估计与分级量化结合，在容量与精度之间连续权衡。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-14","sourceId":"kv-6","targetId":"kv-8","type":"improves","explanation":"LoRC 延续 CSKV 的低维 KV 表示路线，以渐进低秩结构改进固定通道收缩，在不同层和阶段分配更合适的压缩强度。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-15","sourceId":"kv-4","targetId":"kv-9","type":"improves","explanation":"Ada-KV 在 SnapKV 的按头观察与压缩基础上继续细化预算分配，使不同注意力头依据自身需求获得自适应缓存容量。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-16","sourceId":"kv-4","targetId":"kv-10","type":"replaces","explanation":"AttentionPredictor 用时序模式预测后续所需 KV，尝试替代 SnapKV 主要依赖当前观察窗口生成压缩快照的选择方式。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-17","sourceId":"kv-0","targetId":"kv-11","type":"improves","explanation":"AnDPro 仍解决有限预算下保留关键 KV 的问题，但以锚方向投影提供更精确的淘汰依据，改进累计注意力分数的判别方式。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-18","sourceId":"kv-6","targetId":"kv-12","type":"improves","explanation":"AsymKV 继承 CSKV 的通道压缩目标，并利用键和值的信息结构差异采取非对称压缩，避免二者使用同一压缩策略。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-19","sourceId":"kv-8","targetId":"kv-13","type":"combines","explanation":"SALS 吸收 LoRC 的低秩压缩思路，将 KV 映射到更紧凑的潜空间，再在潜空间中执行稀疏注意力选择。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-20","sourceId":"kv-3","targetId":"kv-13","type":"combines","explanation":"SALS 将 QUEST 的查询相关稀疏选择与潜空间 KV 压缩结合，使检索对象更紧凑，同时保留按查询筛选信息的能力。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-21","sourceId":"alt-3","targetId":"alt-5","type":"improves","explanation":"Mamba-2 以状态空间对偶重新组织 Mamba 的选择性状态更新，在保持线性递推路线的同时改善训练并行性与计算实现。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-22","sourceId":"alt-2","targetId":"alt-4","type":"improves","explanation":"GLA 延续 TransNormerLLM 的线性注意力方向，通过门控机制增强状态更新与遗忘控制，改善长序列信息选择能力。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-23","sourceId":"alt-4","targetId":"alt-6","type":"combines","explanation":"Based 把线性注意力的全局递推能力与局部卷积结合；相较纯门控线性注意力，它显式补入局部模式建模。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-24","sourceId":"alt-3","targetId":"alt-7","type":"combines","explanation":"Griffin 吸收 Mamba 式门控递推状态的高效长程建模思路，同时结合局部注意力来补足精细的短程交互。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-25","sourceId":"alt-6","targetId":"alt-7","type":"combines","explanation":"Griffin 与 Based 都采用局部与全局模块混合；它把 Based 的线性注意力全局模块换成门控递推单元，形成另一种混合结构。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-26","sourceId":"brain-0","targetId":"brain-1","type":"inspires","explanation":"SDMTR 受海马体记忆巩固机制启发，把短期工作记忆与长期记忆的协作思想落实为共享的双记忆 Transformer。","confidence":0.78,"analysisBasis":"abstract"},{"id":"rel-27","sourceId":"brain-1","targetId":"brain-3","type":"migrates_problem","explanation":"PaceLLM 将 SDMTR 的双记忆组织思路迁移到长上下文语言模型，重点转向如何以脑启发记忆机制降低上下文处理成本。","confidence":0.78,"analysisBasis":"abstract"}]};
+const DEMO_PDF_BASE64="";
+const DEMO_PAPER_ID="system-1";
+const HAS_DEMO_PDF=false;
+const RELATION_LABELS={"extends":"继承并扩展","improves":"性能改进","replaces":"替代路径","combines":"融合路线","contrasts":"对照路线","inspires":"思想启发","migrates_problem":"问题迁移"};
+const RELATION_COLORS={"extends":"#33765f","improves":"#2b6ca3","replaces":"#a34d3f","combines":"#7654a3","contrasts":"#a06a22","inspires":"#2e827f","migrates_problem":"#7a617f"};
+const selected=new Set();
+let activePaperId=null;
+const byId=new Map(TREE.papers.map(paper=>[paper.id,paper]));
+const branchById=new Map(TREE.branches.map(branch=>[branch.id,branch]));
+const map=document.getElementById("research-map");
+const reader=document.getElementById("reader");
+const backdrop=document.getElementById("reader-backdrop");
+const escHtml=value=>String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+const evidenceLabel=basis=>basis==="fulltext"?"基于全文":basis==="abstract"?"基于摘要":"基于元数据";
+const accessLabel=paper=>HAS_DEMO_PDF&&paper.id===DEMO_PAPER_ID?"内置全文":paper.accessStatus==="open_pdf"||paper.accessStatus==="local_pdf"?"开放全文":paper.accessStatus==="abstract_only"?"仅摘要":paper.accessStatus==="institutional_required"?"可能需要机构权限":"待补充全文";
+function relatedTo(id){return TREE.relations.filter(relation=>relation.sourceId===id||relation.targetId===id)}
+function updateHighlight(){
+  map.classList.toggle("map-active",selected.size>0);
+  document.querySelectorAll(".paper-node").forEach(node=>{const id=node.dataset.paperId;node.classList.toggle("locked",selected.has(id));node.classList.remove("connected")});
+  document.querySelectorAll(".relation,.branch-twig").forEach(line=>line.classList.remove("highlighted"));
+  for(const id of selected){
+    document.querySelector('.branch-twig[data-paper="'+CSS.escape(id)+'"]')?.classList.add("highlighted");
+    for(const relation of relatedTo(id)){
+      document.querySelector('.relation[data-relation="'+CSS.escape(relation.id)+'"]')?.classList.add("highlighted");
+      document.querySelector('.paper-node[data-paper-id="'+CSS.escape(relation.sourceId)+'"]')?.classList.add("connected");
+      document.querySelector('.paper-node[data-paper-id="'+CSS.escape(relation.targetId)+'"]')?.classList.add("connected");
+    }
+  }
+}
+function relationCard(relation,id){
+  const incoming=relation.targetId===id;
+  const other=byId.get(incoming?relation.sourceId:relation.targetId);
+  const current=byId.get(id);
+  const confidence=Math.round((relation.confidence??.78)*100);
+  return '<article class="relation-card" style="--relation-color:'+(RELATION_COLORS[relation.type]||"#52756a")+'"><header><b>'+(incoming?"前序 · ":"后续 · ")+escHtml(RELATION_LABELS[relation.type]||relation.type)+'</b><small>'+confidence+'% · '+evidenceLabel(relation.analysisBasis)+'</small></header><p class="relation-path">'+escHtml(incoming?other?.title:current?.title)+' → '+escHtml(incoming?current?.title:other?.title)+'</p><p>'+escHtml(relation.explanation||"关系说明待补充")+'</p></article>';
+}
+function renderReader(id){
+  const paper=byId.get(id);if(!paper)return;
+  const branch=branchById.get(paper.branchId);
+  const relations=relatedTo(id);
+  document.getElementById("reader-title").textContent=paper.title;
+  document.getElementById("reader-title-zh").textContent=paper.titleZh;
+  const primary=HAS_DEMO_PDF&&paper.id===DEMO_PAPER_ID?'<button type="button" class="primary" id="open-demo-pdf">打开内置 PDF</button>':paper.url?'<a class="primary" href="'+escHtml(paper.url)+'" target="_blank" rel="noopener">打开论文来源</a>':'';
+  const secondary=paper.url?'<a href="'+escHtml(paper.url)+'" target="_blank" rel="noopener">官方页面</a>':'';
+  document.getElementById("reader-body").innerHTML='<div class="reader-meta"><span>'+paper.year+'</span><span>'+escHtml(paper.venue||"来源待补充")+'</span><span>'+escHtml(branch?.name||"未分类")+'</span><span>'+accessLabel(paper)+'</span><span>'+evidenceLabel(paper.analysisBasis)+'</span><span>置信度 '+Math.round((paper.confidence??.7)*100)+'%</span></div><div class="reader-grid"><section><h3>研究问题</h3><p>'+escHtml(paper.problem||"当前资料不足，待补充。")+'</p></section><section><h3>核心方法</h3><p>'+escHtml(paper.method||"当前资料不足，待补充。")+'</p></section><section><h3>主要贡献</h3><p>'+escHtml(paper.contribution||"当前资料不足，待补充。")+'</p></section></div><section class="relation-block"><h3>论文关系 · '+relations.length+' 条</h3>'+(relations.length?relations.map(relation=>relationCard(relation,id)).join(""):'<p class="empty">当前没有已确认的直接关系。</p>')+'</section><div class="reader-actions">'+primary+secondary+'</div>';
+  document.getElementById("open-demo-pdf")?.addEventListener("click",openDemoPdf);
+  reader.classList.add("open");backdrop.classList.add("open");
+}
+function selectPaper(id,{toggle=true,scroll=false}={}){
+  if(toggle&&selected.has(id)){selected.delete(id);activePaperId=[...selected].at(-1)||null}else{selected.add(id);activePaperId=id}
+  updateHighlight();
+  if(activePaperId){renderReader(activePaperId)}else{closeReader()}
+  if(scroll){document.querySelector('.paper-node[data-paper-id="'+CSS.escape(id)+'"]')?.scrollIntoView({behavior:"smooth",block:"center",inline:"center"})}
+}
+function closeReader(){reader.classList.remove("open");backdrop.classList.remove("open")}
+function clearSelection(){selected.clear();activePaperId=null;updateHighlight();closeReader()}
+function openDemoPdf(){
+  try{const binary=atob(DEMO_PDF_BASE64);const bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);const url=URL.createObjectURL(new Blob([bytes],{type:"application/pdf"}));const tab=window.open(url,"_blank");if(!tab)location.href=url;setTimeout(()=>URL.revokeObjectURL(url),120000)}catch(error){alert("当前浏览器无法直接打开内置 PDF，请选择右侧官方页面。")}
+}
+document.querySelectorAll(".paper-node").forEach(node=>{node.addEventListener("click",()=>selectPaper(node.dataset.paperId));node.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();selectPaper(node.dataset.paperId)}})});
+document.querySelectorAll("[data-directory-paper]").forEach(button=>button.addEventListener("click",()=>selectPaper(button.dataset.directoryPaper,{toggle:false,scroll:true})));
+document.getElementById("close-reader").addEventListener("click",closeReader);
+document.getElementById("reader-backdrop").addEventListener("click",closeReader);
+document.getElementById("clear-selection").addEventListener("click",clearSelection);
+const scroller=document.getElementById("map-scroller");
+const zoomIndicator=document.getElementById("zoom-indicator");
+const MAP_WIDTH=1682;
+const MAP_HEIGHT=2278;
+let mapScale=1;
+let pinchState=null;
+function clampScale(value){return Math.min(2.4,Math.max(.5,value))}
+function setMapScale(next,{clientX,clientY,contentX,contentY}={}){
+  const scale=clampScale(next);
+  const rect=scroller.getBoundingClientRect();
+  const localX=Number.isFinite(clientX)?clientX-rect.left:scroller.clientWidth/2;
+  const localY=Number.isFinite(clientY)?clientY-rect.top:scroller.clientHeight/2;
+  const anchorX=Number.isFinite(contentX)?contentX:(scroller.scrollLeft+localX)/mapScale;
+  const anchorY=Number.isFinite(contentY)?contentY:(scroller.scrollTop+localY)/mapScale;
+  mapScale=scale;
+  map.setAttribute("width",String(MAP_WIDTH*mapScale));
+  map.setAttribute("height",String(MAP_HEIGHT*mapScale));
+  map.style.width=(MAP_WIDTH*mapScale)+"px";
+  map.style.height=(MAP_HEIGHT*mapScale)+"px";
+  scroller.scrollLeft=Math.max(0,anchorX*mapScale-localX);
+  scroller.scrollTop=Math.max(0,anchorY*mapScale-localY);
+  const percent=Math.round(mapScale*100);
+  zoomIndicator.textContent=percent+"%";
+  zoomIndicator.setAttribute("aria-label","当前缩放 "+percent+"%，点按恢复");
+}
+function touchDistance(touches){return Math.hypot(touches[0].clientX-touches[1].clientX,touches[0].clientY-touches[1].clientY)}
+function touchMidpoint(touches){return {x:(touches[0].clientX+touches[1].clientX)/2,y:(touches[0].clientY+touches[1].clientY)/2}}
+scroller.addEventListener("touchstart",event=>{
+  if(event.touches.length!==2)return;
+  const mid=touchMidpoint(event.touches),rect=scroller.getBoundingClientRect();
+  pinchState={distance:touchDistance(event.touches),scale:mapScale,contentX:(scroller.scrollLeft+mid.x-rect.left)/mapScale,contentY:(scroller.scrollTop+mid.y-rect.top)/mapScale};
+},{passive:true});
+scroller.addEventListener("touchmove",event=>{
+  if(!pinchState||event.touches.length!==2)return;
+  event.preventDefault();
+  const mid=touchMidpoint(event.touches);
+  setMapScale(pinchState.scale*touchDistance(event.touches)/pinchState.distance,{clientX:mid.x,clientY:mid.y,contentX:pinchState.contentX,contentY:pinchState.contentY});
+},{passive:false});
+scroller.addEventListener("touchend",event=>{if(event.touches.length<2)pinchState=null},{passive:true});
+scroller.addEventListener("touchcancel",()=>{pinchState=null},{passive:true});
+scroller.addEventListener("wheel",event=>{
+  if(!event.ctrlKey&&!event.metaKey)return;
+  event.preventDefault();
+  setMapScale(mapScale*Math.exp(-event.deltaY*.002),{clientX:event.clientX,clientY:event.clientY});
+},{passive:false});
+let safariGestureScale=1;
+scroller.addEventListener("gesturestart",event=>{event.preventDefault();safariGestureScale=mapScale},{passive:false});
+scroller.addEventListener("gesturechange",event=>{event.preventDefault();setMapScale(safariGestureScale*event.scale,{clientX:event.clientX,clientY:event.clientY})},{passive:false});
+zoomIndicator.addEventListener("click",()=>setMapScale(1));
+requestAnimationFrame(()=>{scroller.scrollLeft=Math.max(0,310-24)});
+</script>
+</body>
+</html>
