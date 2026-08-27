@@ -1,0 +1,85 @@
+import { chromium } from "playwright-core";
+
+const baseUrl = (process.env.RTS_BASE_URL || "http://127.0.0.1:4318").replace(/\/$/, "");
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { promises as fs } from "node:fs";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const artifactDir = path.join(root, "test-artifacts", "current");
+await fs.rm(artifactDir, { recursive: true, force: true });
+await fs.mkdir(artifactDir, { recursive: true });
+const browser = await chromium.launch({ headless: true, executablePath: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe" });
+const results = [];
+for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: "mobile", width: 390, height: 844 }]) {
+  const page = await browser.newPage({ viewport });
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.screenshot({ path: path.join(artifactDir, `home-${viewport.name}.png`), fullPage: true });
+  const cards = await page.locator(".tree-card").count();
+  await page.locator("#new-tree-btn").click();
+  await page.locator('[data-mode="ai"]').click();
+  const idleProgressHidden = !await page.locator("#research-progress").isVisible();
+  await page.locator("#form-tree-name").fill("高效注意力检索测试");
+  await page.locator("#save-tree-btn").click();
+  await page.screenshot({ path: path.join(artifactDir, `ai-dialog-${viewport.name}.png`), fullPage: true });
+  await page.locator('[data-close="tree-dialog"]').last().click();
+  await page.locator("[data-open-tree]").first().click();
+  await page.locator(".paper-node").first().waitFor();
+  const nodes = await page.locator(".paper-node").count();
+  const accessMarkers = await page.locator(".access-marker").count();
+  const relationLines = await page.locator(".relation").count();
+  const relationLabels = await page.locator(".relation-label").count();
+  const relationKinds = [...new Set(await page.locator(".relation-label text").allTextContents())];
+  const overviewSections = await page.locator("#relationship-overview details").count();
+  const svgBox = await page.locator("#tree-canvas svg").boundingBox();
+  const bodyOverflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
+  await page.screenshot({ path: path.join(artifactDir, `tree-${viewport.name}.png`), fullPage: true });
+  if (viewport.name === "desktop") {
+    await page.locator('.paper-node[data-paper="system-2"]').hover();
+    const relationshipBox = await page.locator("#relationship-panel").boundingBox();
+    if (!relationshipBox || relationshipBox.width < 300 || relationshipBox.width > 360) throw new Error("桌面关系栏宽度不符合紧凑布局");
+    if (await page.locator(".side-panel").evaluate(element => getComputedStyle(element).position) !== "sticky") throw new Error("桌面右侧关系栏没有吸附视口");
+    await page.locator('.paper-node[data-paper="system-2"]').click();
+    await page.waitForTimeout(320);
+    await page.locator('.paper-node[data-paper="system-3"]').click();
+    await page.waitForTimeout(320);
+    if (await page.locator("#relationship-panel .relationship-paper-block").count() !== 2) throw new Error("桌面关系栏没有同时排下两篇锁定论文");
+    if (await page.locator("#relationship-panel-body").evaluate(element => element.scrollWidth > element.clientWidth)) throw new Error("多论文关系栏出现横向溢出");
+    await page.screenshot({ path: path.join(artifactDir, "tree-multi-lock-desktop.png"), fullPage: false });
+    await page.locator("#clear-relationship-btn").click();
+    await page.locator('.paper-node[data-paper="brain-3"]').hover();
+    const lowerRelationshipBox = await page.locator("#relationship-panel").boundingBox();
+    if (!lowerRelationshipBox || lowerRelationshipBox.y < 55 || lowerRelationshipBox.y > 90) throw new Error("滚到下方论文后关系说明没有保持在视口顶部");
+    await page.screenshot({ path: path.join(artifactDir, "tree-trace-desktop.png"), fullPage: false });
+    await page.mouse.move(2, 2);
+  } else {
+    await page.locator('.relation-peek-control[data-paper="system-2"]').click();
+    if (!await page.locator("#relationship-panel.mobile-open").isVisible()) throw new Error("移动端关系抽屉没有显示");
+    await page.locator("#toggle-relationship-btn").click();
+    await page.locator('.relation-peek-control[data-paper="system-3"]').click();
+    if (await page.locator("#relationship-panel .relationship-paper-block").count() !== 2) throw new Error("移动端关系抽屉没有同时显示两篇锁定论文");
+    await page.waitForTimeout(260);
+    await page.screenshot({ path: path.join(artifactDir, "tree-relations-mobile.png"), fullPage: false });
+    await page.locator("#toggle-relationship-btn").click();
+  }
+  const readerPromise = page.context().waitForEvent("page", { timeout: 10000 });
+  await page.locator(".paper-node").first().dblclick();
+  const readerPage = await readerPromise;
+  await readerPage.waitForLoadState("domcontentloaded");
+  if (!readerPage.url().includes("/reader.html")) throw new Error(`${viewport.name} 双击论文没有打开阅读页`);
+  await readerPage.locator("#pdf-input").setInputFiles({ name: "annotated-paper.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4\n%%EOF") });
+  const replacementVisible = await readerPage.locator("#replace-panel").isVisible();
+  await readerPage.screenshot({ path: path.join(artifactDir, `reader-${viewport.name}.png`), fullPage: true });
+  await readerPage.close();
+  results.push({ viewport: viewport.name, cards, nodes, accessMarkers, relationLines, relationLabels, relationKinds, overviewSections, svgBox, bodyOverflow, idleProgressHidden, replacementVisible, errors });
+  if (accessMarkers !== nodes) throw new Error(`${viewport.name} 访问状态标记数量与论文节点不一致`);
+  if (relationLabels !== relationLines) throw new Error(`${viewport.name} 关系线与关系标签数量不一致`);
+  if (relationKinds.length < 5) throw new Error(`${viewport.name} 内置研究树关系类型仍过于单一`);
+  if (overviewSections !== 6) throw new Error(`${viewport.name} 关系总览分区不完整`);
+  if (bodyOverflow) throw new Error(`${viewport.name} 页面出现非预期横向溢出`);
+  await page.close();
+}
+await browser.close();
+console.log(JSON.stringify(results, null, 2));
