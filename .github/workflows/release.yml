@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Build privacy-clean downloads
+        shell: pwsh
+        env:
+          RTS_INCLUDE_DEMO_PDF: "0"
+        run: |
+          npm run build:friend-share
+          npm run build:mobile-share
+          Copy-Item dist/Research-Tree-Studio-WeChat-Demo.zip "dist/Research-Tree-Studio-Windows-$env:GITHUB_REF_NAME.zip"
+          Copy-Item dist/Research-Tree-Mobile-Demo.html "dist/Research-Tree-Studio-Mobile-$env:GITHUB_REF_NAME.html"
+          Copy-Item dist/Research-Tree-Mobile-Demo.zip "dist/Research-Tree-Studio-Mobile-$env:GITHUB_REF_NAME.zip"
+      - name: Publish GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create $env:GITHUB_REF_NAME --generate-notes --title "Research Tree Studio $env:GITHUB_REF_NAME" `
+            "dist/Research-Tree-Studio-Windows-$env:GITHUB_REF_NAME.zip" `
+            "dist/Research-Tree-Studio-Mobile-$env:GITHUB_REF_NAME.html" `
+            "dist/Research-Tree-Studio-Mobile-$env:GITHUB_REF_NAME.zip"
