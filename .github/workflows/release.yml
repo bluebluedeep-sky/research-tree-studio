@@ -33,7 +33,16 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create $env:GITHUB_REF_NAME --generate-notes --title "Research Tree Studio $env:GITHUB_REF_NAME" `
-            "dist/Research-Tree-Studio-Windows-$env:GITHUB_REF_NAME.zip" `
-            "dist/Research-Tree-Studio-Mobile-$env:GITHUB_REF_NAME.html" `
-            "dist/Research-Tree-Studio-Mobile-$env:GITHUB_REF_NAME.zip"
+          $tag = $env:GITHUB_REF_NAME
+          $assets = @(
+            "dist/Research-Tree-Studio-Windows-$tag.zip"
+            "dist/Research-Tree-Studio-Mobile-$tag.html"
+            "dist/Research-Tree-Studio-Mobile-$tag.zip"
+          )
+
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag @assets --clobber
+          } else {
+            gh release create $tag @assets --generate-notes --title "Research Tree Studio $tag"
+          }
