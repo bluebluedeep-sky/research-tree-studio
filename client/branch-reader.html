@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>研究分支阅读</title>
+  <style>
+    :root{color-scheme:light;--ink:#17211d;--muted:#637068;--line:#ccd8d0;--accent:#007c70;--paper:#fff;--bg:#eef3ef}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 Arial,"Microsoft YaHei",sans-serif}
+    header{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:14px;min-height:62px;padding:9px max(18px,calc((100vw - 1100px)/2));background:#fff;border-bottom:1px solid var(--line)}
+    header a{border:1px solid var(--line);padding:7px 10px;color:var(--ink);text-decoration:none}.title{min-width:0}.title strong,.title span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.title span{font-size:12px;color:var(--muted)}
+    main{width:min(1100px,calc(100% - 28px));margin:28px auto 60px}.intro{border-left:5px solid var(--branch,#007c70);padding:4px 0 4px 16px}.intro h1{margin:0;font-size:26px}.intro p{margin:6px 0;color:var(--muted)}
+    .papers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:22px}.paper{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:3px 12px;align-items:center;min-height:112px;padding:13px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--branch,#007c70);color:var(--ink);text-decoration:none}.paper:hover{border-color:var(--branch,#007c70);box-shadow:0 6px 18px #17211d14}.year{grid-row:1/4;color:var(--branch,#007c70);font-size:18px;font-weight:750}.paper strong,.paper span{min-width:0;overflow:hidden;text-overflow:ellipsis}.paper strong{font-size:15px}.paper .en{color:#3f5148;white-space:nowrap}.paper .meta{color:var(--muted);font-size:12px}.paper .open{grid-column:3;grid-row:1/4;color:var(--branch,#007c70);font-weight:700}.empty{margin-top:22px;padding:24px;background:#fff;border:1px solid var(--line)}
+    @media(max-width:720px){.papers{grid-template-columns:1fr}.paper{grid-template-columns:48px minmax(0,1fr)}.paper .open{display:none}.intro h1{font-size:22px}}
+  </style>
+</head>
+<body>
+  <header><a id="back-link" href="/">← 返回研究树</a><div class="title"><strong id="header-title">研究分支阅读</strong><span id="header-subtitle">正在读取本地研究树…</span></div></header>
+  <main><section class="intro"><h1 id="branch-name">研究分支</h1><p id="branch-question"></p><p id="branch-count"></p></section><section class="papers" id="papers"></section></main>
+  <script type="module">
+    import { accessStatusLabel, analysisBasisLabel, normalizePaperAccess } from "./access-model.js";
+    const params = new URLSearchParams(location.search), treeId = params.get("tree") || "", branchId = params.get("branch") || "";
+    const $ = selector => document.querySelector(selector);
+    function openDb() { return new Promise((resolve, reject) => { const request = indexedDB.open("research-tree-studio", 1); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); }); }
+    async function loadTree() {
+      const db = await openDb();
+      const workspace = await new Promise((resolve, reject) => { const request = db.transaction("app").objectStore("app").get("workspace"); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
+      let tree = workspace?.trees?.find(item => item.id === treeId);
+      if (!tree && treeId === "efficient-attention") tree = await fetch("/api/seed").then(response => response.json());
+      return tree;
+    }
+    function readerUrl(paper) { const query = new URLSearchParams({ tree: treeId, paper: paper.id, title: paper.title || paper.titleZh || "论文" }); if (paper.localPdf) query.set("file", paper.localPdf); if (paper.url) query.set("source", paper.url); if (paper.pdfUrl) query.set("pdf", paper.pdfUrl); return `/reader.html?${query}`; }
+    const tree = await loadTree(), branch = tree?.branches?.find(item => item.id === branchId);
+    if (!tree || !branch) { $("#header-subtitle").textContent = "没有找到对应的研究分支"; $("#papers").innerHTML = '<div class="empty">该分支可能已被删除，请返回研究树重新选择。</div>'; }
+    else {
+      const papers = tree.papers.filter(paper => paper.branchId === branch.id).sort((a, b) => a.year - b.year || a.title.localeCompare(b.title));
+      document.title = `${branch.name} - 分支阅读`; document.documentElement.style.setProperty("--branch", branch.color || "#007c70");
+      $("#back-link").href = `/#tree=${encodeURIComponent(tree.id)}`; $("#header-title").textContent = tree.name; $("#header-subtitle").textContent = branch.name; $("#branch-name").textContent = branch.name; $("#branch-question").textContent = branch.question; $("#branch-count").textContent = `共 ${papers.length} 篇论文，越靠后年份越新。点击论文进入本地阅读页。`;
+      if (!papers.length) $("#papers").innerHTML = '<div class="empty">该分支暂时没有论文。</div>';
+      for (const source of papers) { const paper = normalizePaperAccess(source), link = document.createElement("a"); link.className = "paper"; link.href = readerUrl(paper); link.target = "_blank"; link.rel = "noopener noreferrer"; const year = document.createElement("span"); year.className = "year"; year.textContent = paper.year; const titleZh = document.createElement("strong"); titleZh.textContent = paper.titleZh || paper.title; const titleEn = document.createElement("span"); titleEn.className = "en"; titleEn.textContent = paper.title; const meta = document.createElement("span"); meta.className = "meta"; meta.textContent = `${paper.venue || "来源待确认"} · ${accessStatusLabel(paper.accessStatus)} · ${analysisBasisLabel(paper.analysisBasis)}分析`; const open = document.createElement("span"); open.className = "open"; open.textContent = "阅读 →"; link.append(year, titleZh, titleEn, meta, open); $("#papers").append(link); }
+    }
+  </script>
+</body>
+</html>

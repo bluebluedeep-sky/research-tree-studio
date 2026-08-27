@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>研究树工作台</title>
+  <link rel="stylesheet" href="styles.css?v=20260826-relation-inspector">
+</head>
+<body>
+  <header class="appbar">
+    <button class="brand" id="home-btn" aria-label="返回研究方向首页"><span class="brand-mark">Y</span><span>研究树工作台</span></button>
+    <nav class="app-actions">
+      <button id="import-btn">导入</button>
+      <button id="export-btn">导出</button>
+      <button id="settings-btn">设置</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="view active" id="home-view">
+      <header class="page-head">
+        <div><p class="kicker">RESEARCH DIRECTIONS</p><h1>研究方向大树</h1><p>每棵树是一条独立研究脉络。进入后可分析论文、调整关系并追踪每次变化。</p></div>
+        <button class="primary" id="new-tree-btn">＋ 新建研究方向</button>
+      </header>
+      <div class="tree-grid" id="tree-grid"></div>
+    </section>
+
+    <section class="view" id="tree-view">
+      <header class="tree-head">
+        <button class="link-btn" id="back-btn">← 所有研究方向</button>
+        <div class="tree-title"><h1 id="tree-name"></h1><p id="tree-description"></p></div>
+        <div class="toolbar">
+          <button id="undo-btn" title="撤销">↶</button><button id="redo-btn" title="重做">↷</button>
+          <button id="history-btn">版本历史</button><button id="edit-tree-btn">编辑树</button>
+        </div>
+      </header>
+      <div class="workbench">
+        <section class="canvas-panel">
+          <div class="canvas-toolbar"><div class="legend" id="branch-legend"></div><div class="access-legend" aria-label="论文访问状态"><span class="full">全文</span><span class="abstract">摘要</span><span class="locked">机构权限</span><span class="missing">待补充</span></div></div>
+          <div class="tree-canvas" id="tree-canvas"></div>
+          <aside class="paper-tooltip" id="paper-tooltip"></aside>
+          <section class="paper-reader" id="paper-reader"><h2>选择一个论文节点</h2><p>点击树上的论文，查看它解决的问题、所在分支以及与其他工作的关系。</p></section>
+          <section class="relationship-overview" id="relationship-overview" aria-label="研究脉络总览"></section>
+        </section>
+        <aside class="side-panel">
+          <section class="relationship-panel" id="relationship-panel" aria-label="论文关系速览">
+            <header class="relationship-panel-head">
+              <div><h2>关系速览</h2><span id="relationship-panel-count">选择论文</span></div>
+              <div class="compact-actions">
+                <button type="button" id="pin-relationship-btn" class="compact-icon" title="锁定当前论文关系" aria-label="锁定当前论文关系" disabled>锁定</button>
+                <button type="button" id="clear-relationship-btn" class="compact-icon" title="清除当前关系选择" aria-label="清除当前关系选择" disabled>清除</button>
+                <button type="button" id="toggle-relationship-btn" class="compact-icon" title="收起关系栏" aria-label="收起关系栏">⌃</button>
+              </div>
+            </header>
+            <div class="relationship-panel-body" id="relationship-panel-body">
+              <p class="relationship-empty">把鼠标停在论文上，即可同时查看它的前序来源和后续影响。</p>
+            </div>
+          </section>
+          <div class="tabs"><button class="active" data-side-tab="queue">论文导入</button><button data-side-tab="pending">待确认</button><button data-side-tab="branches">分支</button></div>
+          <section class="side-tab active" id="side-queue">
+            <label class="drop-zone" id="drop-zone" for="pdf-input"><strong>添加 PDF</strong><span>选择文件或拖到这里</span><input id="pdf-input" type="file" accept="application/pdf" multiple></label>
+            <div class="url-row"><input id="paper-url" placeholder="DOI、arXiv、OpenReview 或论文网页"><button id="add-url-btn">添加</button></div>
+            <div class="queue-summary"><span id="queue-count">0 个任务</span><button class="danger-link" id="cancel-all-btn">取消全部</button></div>
+            <div class="total-progress"><i id="total-progress"></i></div>
+            <div class="queue-list" id="queue-list"></div>
+          </section>
+          <section class="side-tab" id="side-pending"><div id="pending-list" class="plain-list"></div></section>
+          <section class="side-tab" id="side-branches"><button class="secondary full" id="add-branch-btn">＋ 新建分支</button><div id="branch-list" class="plain-list"></div></section>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <dialog id="tree-dialog">
+    <form class="dialog-body" id="tree-form">
+      <header><div><h2 id="tree-dialog-title">新建研究方向</h2><p>手动创建空树，或让 AI 检索论文并生成初始脉络。</p></div><button type="button" class="icon-btn" data-close="tree-dialog" aria-label="关闭">×</button></header>
+      <div class="segmented" id="create-mode"><button type="button" class="active" data-mode="manual">手动创建</button><button type="button" data-mode="ai">AI 帮你检索</button></div>
+      <label>研究方向名称<input id="form-tree-name" required maxlength="60"></label>
+      <label>一句话简介<textarea id="form-tree-description" rows="2" maxlength="220"></textarea></label>
+      <div id="ai-fields" hidden>
+        <label>重点关注方向（选填）<textarea id="form-focus" rows="2"></textarea></label>
+        <label>检索模式</label>
+        <div class="segmented search-mode" id="search-mode"><button type="button" class="active" data-search-mode="lineage">研究脉络优先</button><button type="button" data-search-mode="readable">可阅读全文优先</button></div>
+        <div class="field-grid"><label>时间范围<input id="form-years" placeholder="例如 2023-2026"></label><label>论文数量<input id="form-count" type="number" min="5" max="60" value="30"></label></div>
+        <label class="check"><input id="form-top-venues" type="checkbox" checked>优先顶会顶刊</label>
+      </div>
+      <div class="dialog-progress" id="research-progress" hidden>
+        <div class="research-meter" aria-hidden="true"><i id="research-progress-bar"></i></div>
+        <div class="research-progress-head"><span id="research-progress-stage">准备开始</span><strong id="research-progress-percent">0%</strong></div>
+        <small id="research-progress-detail">正在建立连接…</small>
+      </div>
+      <div class="form-message" id="research-message" role="alert" hidden></div>
+      <footer><button type="button" class="danger" id="delete-tree-btn" hidden>删除此树</button><button type="button" data-close="tree-dialog">取消</button><button class="primary" id="save-tree-btn" type="submit">创建</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="settings-dialog">
+    <form class="dialog-body" id="settings-form">
+      <header><div><h2>模型与处理设置</h2><p>密钥仅发送给本机服务和 DeepSeek，不进入工作区导出。</p></div><button type="button" class="icon-btn" data-close="settings-dialog">×</button></header>
+      <label>DeepSeek API Key<div class="secret-row"><input id="api-key" type="password" autocomplete="off" placeholder="sk-..."><button type="button" id="toggle-key">显示</button></div></label>
+      <label class="check"><input id="remember-key" type="checkbox">保存在当前浏览器</label>
+      <div class="field-grid"><label>模型<input id="model-name" value="deepseek-v4-flash"></label><label>分析深度<select id="analysis-depth"><option value="fast">快速</option><option value="balanced" selected>均衡</option><option value="deep">深入关系</option></select></label></div>
+      <div class="field-grid"><label>并发任务数<input id="concurrency" type="number" min="1" max="5" value="2"></label><label>失败重试<input id="retries" type="number" min="0" max="5" value="2"></label></div>
+      <label class="check"><input id="save-pdf" type="checkbox">在本地数据库保留原始 PDF</label>
+      <label class="check"><input id="auto-low-confidence" type="checkbox">自动写入低置信度论文</label>
+      <div class="connection-result" id="connection-result"></div>
+      <footer><button type="button" class="danger" id="delete-key-btn">删除本地密钥</button><button type="button" id="test-key-btn">测试连接</button><button class="primary" type="submit">保存设置</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="paper-dialog">
+    <form class="dialog-body wide" id="paper-form">
+      <header><div><h2>编辑论文节点</h2><p>修改后会生成一个可撤销版本。</p></div><button type="button" class="icon-btn" data-close="paper-dialog">×</button></header>
+      <input id="paper-id" type="hidden"><div class="field-grid"><label>英文标题<input id="paper-title" required></label><label>中文标题<input id="paper-title-zh" required></label></div>
+      <div class="field-grid thirds"><label>作者<input id="paper-authors"></label><label>年份<input id="paper-year" type="number"></label><label>会议 / 期刊<input id="paper-venue"></label></div>
+      <label>官方链接<input id="paper-link" type="url"></label><label>研究问题<textarea id="paper-problem" rows="2"></textarea></label><label>核心方法<textarea id="paper-method" rows="2"></textarea></label><label>主要贡献<textarea id="paper-contribution" rows="3"></textarea></label>
+      <label>所属分支<select id="paper-branch"></select></label>
+      <section class="relation-editor"><h3>论文关系</h3><div id="paper-relations"></div><div class="relation-form"><select id="relation-target"></select><select id="relation-type"><option value="extends">继承并扩展</option><option value="improves">性能或效果改进</option><option value="replaces">提出替代路径</option><option value="combines">融合路线</option><option value="contrasts">形成对照</option><option value="inspires">结构或思想启发</option><option value="migrates_problem">迁移问题</option></select><input id="relation-explanation" placeholder="说明两篇论文的逻辑关系"><button type="button" id="add-relation-btn">添加关系</button></div></section>
+      <footer><button type="button" class="danger" id="delete-paper-btn">删除论文</button><button type="button" data-close="paper-dialog">取消</button><button class="primary" type="submit">保存修改</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="branch-dialog"><form class="dialog-body" id="branch-form"><header><div><h2>编辑分支</h2><p>分支代表一条清晰的研究问题路线。</p></div><button type="button" class="icon-btn" data-close="branch-dialog">×</button></header><input id="branch-id" type="hidden"><label>分支名称<input id="branch-name" required></label><label>核心问题<textarea id="branch-question" rows="3"></textarea></label><label>颜色<input id="branch-color" type="color" value="#40844a"></label><footer><button type="button" class="danger" id="delete-branch-btn">删除分支</button><button type="button" data-close="branch-dialog">取消</button><button class="primary" type="submit">保存</button></footer></form></dialog>
+
+  <dialog id="history-dialog"><section class="dialog-body"><header><div><h2>版本历史</h2><p>恢复旧版本会先保存当前状态，因此仍可撤回。</p></div><button class="icon-btn" data-close="history-dialog">×</button></header><div class="history-list" id="history-list"></div><footer><button data-close="history-dialog">关闭</button></footer></section></dialog>
+
+  <dialog id="import-dialog"><form class="dialog-body" id="import-form"><header><div><h2>导入工作区</h2><p>先预览，再选择合并或覆盖。</p></div><button type="button" class="icon-btn" data-close="import-dialog">×</button></header><label class="drop-zone" for="workspace-file"><strong>选择研究树工作区文件</strong><span>支持本应用导出的 JSON</span><input id="workspace-file" type="file" accept="application/json"></label><div id="import-preview" class="import-preview">尚未选择文件。</div><footer><button type="button" data-close="import-dialog">取消</button><button type="button" id="merge-import-btn" disabled>合并导入</button><button type="submit" class="primary" id="replace-import-btn" disabled>覆盖导入</button></footer></form></dialog>
+
+  <dialog id="export-dialog"><section class="dialog-body"><header><div><h2>导出当前研究树</h2><p>选择可继续编辑的数据，或可直接分享阅读的独立网页。</p></div><button class="icon-btn" data-close="export-dialog">×</button></header><label class="check"><input id="export-local-pdf-map" type="checkbox">包含本机 PDF 路径映射</label><div class="export-options"><button id="export-tree-json"><strong>研究树 JSON</strong><span>可重新导入并继续编辑</span></button><button id="export-tree-html"><strong>独立 HTML</strong><span>无需服务即可打开阅读</span></button><button id="export-workspace-here"><strong>整个工作区</strong><span>包含全部树和版本历史，不含密钥或认证信息</span></button></div><footer><button data-close="export-dialog">取消</button></footer></section></dialog>
+
+  <script type="module" src="app.js?v=20260827-hover-release"></script>
+</body>
+</html>
